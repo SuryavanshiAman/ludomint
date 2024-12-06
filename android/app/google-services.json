@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "127939317909",
+    "project_id": "ludozupee-d8599",
+    "storage_bucket": "ludozupee-d8599.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127939317909:android:a2b51c3cf816ae7d7f4b9c",
+        "android_client_info": {
+          "package_name": "com.zupee.zupigame.zupee"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWIQSzBS4Lq1rQhM2Mz_uQyNsPKqVdLck"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
