@@ -10,7 +10,7 @@ void copyToClipboard(String code, BuildContext context) {
   ).then(
         (value) => ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Copied to clipboard'),
+        content: Text('Room Code copy successfully.'),
       ),
     ),
   );

@@ -103,148 +103,16 @@ class _MainScreenState extends State<MainScreen> {
               ]);
         },
       )
-      // Container(
-      //   decoration: const BoxDecoration(
-      //       image: DecorationImage(
-      //           image: AssetImage(AppAsset.imagesLudobg), fit: BoxFit.fill)),
-      //   child: Stack(
-      //     alignment: Alignment.center,
-      //     children: [
-      //       appBarContent(),
-      //        const Column(
-      //         mainAxisAlignment: MainAxisAlignment.center,
-      //         children: [
-      //           BoardWidget(),
-      //         ],
-      //       ),
-      //
-      //
-      //       userDiseDesing(),
-      //
-      //       oppentsTurn(),
-      //
-      //       Consumer<LudoProvider>(
-      //         builder: (context, value, child) => value.winners.length == 1
-      //             ? Container(
-      //                 color: Colors.black.withOpacity(0.8),
-      //                 child: Center(
-      //                   child: Column(
-      //                     mainAxisSize: MainAxisSize.min,
-      //                     children: [
-      //                       TextButton(
-      //                         onPressed: () {
-      //                           _triggerConfetti(); // Trigger confetti animation here
-      //                         },
-      //                         child: Column(
-      //                           children: [
-      //                             Text(
-      //                               "Celebrate",
-      //                               style: RighteousRegular.copyWith(
-      //                                   fontSize: widths * 0.04,
-      //                                   color: Colors.white),
-      //                             ),
-      //                             Align(
-      //                               alignment: Alignment.center,
-      //                               child: ConfettiWidget(
-      //                                 confettiController: _confettiController!,
-      //                                 blastDirectionality: BlastDirectionality
-      //                                     .explosive, // don't specify a direction, blast randomly
-      //                                 shouldLoop:
-      //                                     false, // start again as soon as the animation is finished
-      //                                 colors: const [
-      //                                   Colors.green,
-      //                                   Colors.blue,
-      //                                   Colors.pink,
-      //                                   Colors.orange,
-      //                                   Colors.purple
-      //                                 ], // manually specify the colors to be used
-      //                                 createParticlePath:
-      //                                     drawStar, // define a custom shape/path.
-      //                               ),
-      //                             ),
-      //
-      //                             //TOP CENTER - shoot down
-      //                             Align(
-      //                               alignment: Alignment.topCenter,
-      //                               child: ConfettiWidget(
-      //                                 confettiController: _confettiController!,
-      //                                 blastDirectionality:
-      //                                     BlastDirectionality.explosive,
-      //                                 emissionFrequency: 0.01,
-      //                                 numberOfParticles: 20,
-      //                                 maxBlastForce: 100,
-      //                                 minBlastForce: 80,
-      //                                 gravity: 0.3,
-      //                               ),
-      //                             ),
-      //                             Align(
-      //                               alignment: Alignment.topCenter,
-      //                               child: ConfettiWidget(
-      //                                 confettiController: _confettiController!,
-      //                                 blastDirection: pi / 2,
-      //                                 maxBlastForce:
-      //                                     5, // set a lower max blast force
-      //                                 minBlastForce:
-      //                                     2, // set a lower min blast force
-      //                                 emissionFrequency: 0.05,
-      //                                 numberOfParticles:
-      //                                     50, // a lot of particles at once
-      //                                 gravity: 1,
-      //                               ),
-      //                             ),
-      //                           ],
-      //                         ),
-      //                       ),
-      //                       SizedBox(
-      //                         height: heights * 0.09,
-      //                       ),
-      //                       Image.asset("assets/images/thankyou.gif"),
-      //                       const Text("Thank you for playing 😙",
-      //                           style: TextStyle(
-      //                               color: Colors.white, fontSize: 20),
-      //                           textAlign: TextAlign.center),
-      //                       Text(
-      //                           "The Winners is: ${value.winners.map((e) => e.name.toUpperCase()).join(", ")}",
-      //                           style: const TextStyle(
-      //                               color: Colors.white, fontSize: 30),
-      //                           textAlign: TextAlign.center),
-      //                       const Divider(color: Colors.white),
-      //                       const SizedBox(height: 20),
-      //                       const Text("Refresh your browser to play again",
-      //                           style: TextStyle(
-      //                               color: Colors.white, fontSize: 10),
-      //                           textAlign: TextAlign.center),
-      //                     ],
-      //                   ),
-      //                 ),
-      //               )
-      //             : const SizedBox.shrink(),
-      //       ),
-      //       showGif
-      //           ? Container(
-      //               height: heights / 5,
-      //               width: widths / 2,
-      //               decoration: const BoxDecoration(
-      //                   image: DecorationImage(
-      //                       image: AssetImage(AppAsset.imagesLetsplay),
-      //                       fit: BoxFit.fill)),
-      //             )
-      //           : Container(),
-      //     ],
-      //   ),
-      // ),
     );
   }
 
   LudoProvider ludoProvider = LudoProvider();
-  Widget appBarContent() {
-    final heights = MediaQuery.of(context).size.height;
-    final widths = MediaQuery.of(context).size.width;
+  Widget appBarContent(data) {
     return Align(
       alignment: Alignment.topCenter,
       child: Container(
-        height: heights / 10,
-        width: widths / 0.1,
+        height: height / 10,
+        width: width / 0.1,
         decoration: const BoxDecoration(
             image: DecorationImage(
                 fit: BoxFit.fill,
@@ -254,7 +122,7 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: heights / 30,
+                horizontal: height / 30,
               ),
               child: Container(
                 decoration: BoxDecoration(
@@ -277,17 +145,17 @@ class _MainScreenState extends State<MainScreen> {
                 Center(
                     child: Text("Game Mode Online",
                         style: RighteousMedium.copyWith(
-                            fontSize: heights * 0.025, color: Colors.yellow))),
+                            fontSize: height * 0.025, color: Colors.yellow))),
                 Center(
-                    child: Text("Amount:" "₹" + widget.selectedamount,
+                    child: Text("Amount:" "₹" + data['entryAmount'].toString(),
                         style: RighteousMedium.copyWith(
-                            fontSize: heights * 0.02, color: Colors.yellow))),
+                            fontSize: height * 0.02, color: Colors.yellow))),
               ],
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                width: widths / 7,
+                width: width / 7,
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.yellow.shade800, width: 2),
                     borderRadius: BorderRadius.circular(10),
@@ -308,15 +176,15 @@ class _MainScreenState extends State<MainScreen> {
                           return Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              SizedBox(height: heights * 0.02),
+                              SizedBox(height: height * 0.02),
                               Text(
                                 "Settings",
                                 style: RighteousRegular.copyWith(
-                                    fontSize: widths * 0.06,
+                                    fontSize: width * 0.06,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold),
                               ),
-                              SizedBox(height: heights * 0.02),
+                              SizedBox(height: height * 0.02),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
@@ -331,12 +199,12 @@ class _MainScreenState extends State<MainScreen> {
                                           size: 18,
                                         ),
                                         SizedBox(
-                                          width: widths * 0.02,
+                                          width: width * 0.02,
                                         ),
                                         Text(
                                           "Sounds",
                                           style: RighteousRegular.copyWith(
-                                              fontSize: widths * 0.05,
+                                              fontSize: width * 0.05,
                                               color: Colors.white),
                                         ),
                                       ],
@@ -379,12 +247,12 @@ class _MainScreenState extends State<MainScreen> {
                                           size: 18,
                                         ),
                                         SizedBox(
-                                          width: widths * 0.02,
+                                          width: width * 0.02,
                                         ),
                                         Text(
                                           "Vibration",
                                           style: RighteousRegular.copyWith(
-                                              fontSize: widths * 0.05,
+                                              fontSize: width * 0.05,
                                               color: Colors.white),
                                         ),
                                       ],
@@ -433,7 +301,7 @@ class _MainScreenState extends State<MainScreen> {
                                                 const Numberthree()));
                                   },
                                   title: "Leave Game"),
-                              SizedBox(height: heights * 0.03),
+                              SizedBox(height: height * 0.03),
                             ],
                           );
                         });
@@ -480,7 +348,7 @@ class _MainScreenState extends State<MainScreen> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            appBarContent(),
+            appBarContent(data),
              const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

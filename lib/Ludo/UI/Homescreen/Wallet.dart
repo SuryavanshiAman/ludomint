@@ -1,5 +1,6 @@
 import 'package:ludomint/Ludo/UI/Homescreen/withdrawpage.dart';
 import 'package:flutter/material.dart';
+import 'package:ludomint/main.dart';
 
 import '../../../audio.dart';
 import '../../../transaction.dart';
@@ -92,14 +93,15 @@ class _MywalletState extends State<Mywallet> {
                             child: Text("WINNING BALANCE", style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white)),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: widths/20,right: widths/10,bottom: heights/40),
+                            padding: EdgeInsets.only(left: width/20,right: width/11,bottom: height/40),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(winning==null?"₹0.0":"₹"+winning.toString(),style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white)),
                                 SizedBox(width: widths/4.6,),
-                                InkWell(onTap: (){
+                                InkWell(
+                                    onTap: (){
                                   Navigator.push(
                                       context, MaterialPageRoute(builder: (context) => const withdraw_Page()));
                                 },
@@ -112,8 +114,8 @@ class _MywalletState extends State<Mywallet> {
                     ),
                     SizedBox(height: heights/35,),
                     Container(
-                      height: heights/10.5,
-                      width: widths/1.5,
+                      height: height/10.3,
+                      width: width/1.5,
                       decoration: const BoxDecoration(image: DecorationImage(image: AssetImage(AppAsset.imagesWalletnewthree),fit: BoxFit.fill)),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -149,8 +151,8 @@ class _MywalletState extends State<Mywallet> {
                         showDialog(context: context, builder: (context)=>const transaction_History());
                       },
                       child: Container(
-                          height: heights/30,
-                          width: widths/2.4,
+                          height: height/30,
+                          width: width/2.2,
                           decoration: BoxDecoration(color: Colors.orange,borderRadius: BorderRadius.circular(12)),
                           child: Center(child: Text("TRANSACTION HISTORY", style: RighteousMedium.copyWith(fontSize: heights * 0.016, color: Colors.white),))),
                     ),

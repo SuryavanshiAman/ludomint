@@ -475,6 +475,8 @@ class LudoProvider with ChangeNotifier {
   bool get isConnected => _isConnected;
   int _selectedAvatarIndex = 0;
   String? _selectedAvatarImage;
+   int _entryAmount=0;
+   int get entryAmount=>_entryAmount;
 
   int get selectedAvatarIndex => _selectedAvatarIndex;
   String? get selectedAvatarImage => _selectedAvatarImage;
@@ -497,7 +499,10 @@ class LudoProvider with ChangeNotifier {
     _image = value;
     notifyListeners();
   }
-
+void setEntryAmount(int value){
+  _entryAmount=value;
+  notifyListeners();
+}
   // Function to pick an image and encode it to base64
   Future<void> getImage(ImageSource source) async {
     final pickedFile = await picker.pickImage(source: source);
@@ -882,133 +887,6 @@ class LudoProvider with ChangeNotifier {
 
     notifyListeners();
   }
-  // void addMember(context) async {
-  //   final join = Provider.of<JoinViewModel>(context, listen: false);
-  //   final profile = Provider.of<ProfileViewModel>(context, listen: false).profileResponse;
-  //   final firebaseViewModel = Provider.of<FirebaseViewModel>(context, listen: false);
-  //   FirebaseFirestore fireStore = FirebaseFirestore.instance;
-  //   CollectionReference ludoCollection = fireStore.collection('ludo');
-  //   bool isAdded = false;
-  //   final playerColors = players;
-  //   final twoPlayer = (playerQuantity == 2);
-  //
-  //   while (!isAdded) {
-  //     DocumentSnapshot documentSnapshot = await ludoCollection.doc(documentId.toString()).get();
-  //
-  //     if (!documentSnapshot.exists) {
-  //       print("Creating new document with ID $documentId");
-  //       Map<String, dynamic> jsonData = twoPlayer
-  //           ? {
-  //         "1": '{"name":"${profile!.data!.username}","id":"${profile.data!.id}","image":"${profile.data!.profilePicture}","number":"${profile.data!.mobileNumber}","color":"${playerColors[0].type}"}',
-  //         "3": '',
-  //         "isLocked": false,
-  //         "playerQuantity": 2,
-  //         "prizePool": prizePool
-  //       }
-  //           : {
-  //         "1": '{"name":"${profile!.data!.username}","id":"${profile.data!.id}","image":"${profile.data!.profilePicture}","number":"${profile.data!.mobileNumber}","color":"${playerColors[0].type}"}',
-  //         "2": '',
-  //         "3": '',
-  //         "4": '',
-  //         "isLocked": false,
-  //         "playerQuantity": 4,
-  //         "prizePool": prizePool
-  //       };
-  //
-  //       await ludoCollection.doc(documentId.toString()).set(jsonData);
-  //       setFieldKey(1); // Set fieldKey for the first position
-  //       isAdded = true;
-  //     } else {
-  //       // Fetch the document data once and use it to perform multiple checks
-  //       Map<String, dynamic>? existingData = documentSnapshot.data() as Map<String, dynamic>?;
-  //
-  //       if (existingData != null) {
-  //         if (existingData["prizePool"] != prizePool) {
-  //           print("Table has a different prize pool, moving to a new table...");
-  //           updateDocumentId(documentId + 1); // Move to the next table
-  //           continue;
-  //         }
-  //
-  //         if (existingData["playerQuantity"] != playerQuantity) {
-  //           print("Table is meant for ${existingData['playerQuantity']} players, moving to a new table...");
-  //           updateDocumentId(documentId + 1); // Move to the next table
-  //           continue;
-  //         }
-  //
-  //         if (existingData["isLocked"] == true) {
-  //           print("Table is locked, moving to a new table...");
-  //           updateDocumentId(documentId + 1); // Move to the next table
-  //           continue;
-  //         }
-  //
-  //         // Parallel check for 2-player game slots
-  //         if (twoPlayer) {
-  //           final List<bool> slotsFilled = [existingData["1"], existingData["3"]].map((slot) => slot != null && slot != '').toList();
-  //           if (slotsFilled.every((isFilled) => isFilled)) {
-  //             print("Both positions in 2-player table are filled, locking table...");
-  //             await ludoCollection.doc(documentId.toString()).update({"isLocked": true});
-  //             updateDocumentId(documentId + 1); // Move to a new table
-  //             continue;
-  //           }
-  //
-  //           // Add the player to an empty slot
-  //           if (!slotsFilled[0]) {
-  //             await ludoCollection.doc(documentId.toString()).update({
-  //               "1": '{"name":"${profile!.data!.username}","id":"${profile.data!.id}","image":"${profile.data!.profilePicture}","number":"${profile.data!.mobileNumber}","color":"${playerColors[0].type}"}'
-  //             });
-  //             setFieldKey(1);
-  //             isAdded = true;
-  //           } else if (!slotsFilled[1]) {
-  //             await ludoCollection.doc(documentId.toString()).update({
-  //               "3": '{"name":"${profile!.data!.username}","id":"${profile.data!.id}","image":"${profile.data!.profilePicture}","number":"${profile.data!.mobileNumber}","color":"${playerColors[2].type}"}'
-  //             });
-  //             setFieldKey(3);
-  //             isAdded = true;
-  //           }
-  //         } else {
-  //           // Parallel check for 4-player game slots
-  //           final List<bool> slotsFilled = [
-  //             existingData["1"],
-  //             existingData["2"],
-  //             existingData["3"],
-  //             existingData["4"]
-  //           ].map((slot) => slot != null && slot != '').toList();
-  //
-  //           if (slotsFilled.every((isFilled) => isFilled)) {
-  //             print("All positions in 4-player table are filled, locking table...");
-  //             await ludoCollection.doc(documentId.toString()).update({"isLocked": true});
-  //             updateDocumentId(documentId + 1); // Move to a new table
-  //             continue;
-  //           }
-  //
-  //           // Add the player to an empty slot
-  //           for (int i = 0; i < slotsFilled.length; i++) {
-  //             if (!slotsFilled[i]) {
-  //               String fieldKey = (i + 1).toString();
-  //               await ludoCollection.doc(documentId.toString()).update({
-  //                 fieldKey: '{"name":"${profile!.data!.username}","id":"${profile.data!.id}","image":"${profile.data!.profilePicture}","number":"${profile.data!.mobileNumber}","color":"${playerColors[i].type}"}'
-  //               });
-  //               setFieldKey(i + 1);
-  //               isAdded = true;
-  //               break;
-  //             }
-  //           }
-  //         }
-  //       }
-  //
-  //       if (!isAdded) {
-  //         updateDocumentId(documentId + 1); // Move to a new table
-  //       }
-  //     }
-  //   }
-  //
-  //   if (isAdded) {
-  //     firebaseViewModel.setTable(documentId);
-  //     join.joinApi(tournamentId.toString(), documentId.toString(), prizePool, context).then((_) {
-  //       resetPawns(context, documentId);
-  //     });
-  //   }
-  // }
   String? _roomCode;
 
   String? get roomCode => _roomCode;
@@ -1026,7 +904,7 @@ class LudoProvider with ChangeNotifier {
     String roomCode = DateTime.now().millisecondsSinceEpoch.toString(); // Unique room code
 
     bool isRoomCreated = false;
-
+    setRoomCode(roomCode);
     while (!isRoomCreated) {
       DocumentSnapshot documentSnapshot = await ludoCollection.doc(roomCode).get();
 
@@ -1040,11 +918,17 @@ class LudoProvider with ChangeNotifier {
           "playerQuantity": 2, // Only 2 players are allowed
           "prizePool": prizePool
         };
-
+        // gameDoc!.update({
+        //   'entryAmount': entryAmount,
+        // });
         await ludoCollection.doc(roomCode).set(jsonData);
+        ludoCollection.doc(roomCode).update({
+          'entryAmount': entryAmount,
+        });
         setRoomCode(roomCode); // Save the room code in the view model
         setFieldKey(1); // Set field for first player
         isRoomCreated = true;
+
       } else {
         print("Room code already exists, generating a new one...");
         // Regenerate room code if it already exists

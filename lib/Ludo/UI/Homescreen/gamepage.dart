@@ -135,10 +135,12 @@ class _NumberthreeState extends State<Numberthree>  with WidgetsBindingObserver 
       }
       ),
       Fourbox(AppAsset.imagesTwo, "Tournament", () {
-        showDialog(context: context, builder: (ctx) => const CreateJoinRoomScreen());
+        // showDialog(context: context, builder: (ctx) => const CreateJoinRoomScreen());
+        showDialog(context: context, builder: (ctx) => const Classic());
       }),
       Fourbox(AppAsset.imagesThree, "Play with friends", () {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const Myprivate()));
+        // Navigator.push(context, MaterialPageRoute(builder: (context)=>const Myprivate()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const Classic()));
         Audio.sound();
       }),
       Fourbox(AppAsset.imagesFour, "Refer and earn", () {
@@ -299,7 +301,7 @@ class _NumberthreeState extends State<Numberthree>  with WidgetsBindingObserver 
 
                         },
                     ),
-                    Text(wallet==null?"0.0":wallet.toString(), style: RighteousMedium.copyWith(fontSize: Dimensions.fontSizeDefault)),
+                    Text(wallet==null?"0":wallet.toString(), style: RighteousMedium.copyWith(fontSize: Dimensions.fontSizeDefault)),
                     InkWell(
                       child:Image.asset(AppAsset.buttonAdd),
                       onTap: (){

@@ -89,8 +89,7 @@ class _TimerScreenState extends State<TimerScreen> {
           // }
           if (ludoProvider.playerQuantity != 2 ? allPlayersPresent : twoPlayersPresent) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              String argument = ModalRoute.of(context)!.settings.arguments.toString();
-              Navigator.push(context, MaterialPageRoute(builder: (coontext)=>MainScreen(selectedamount:"10")));
+              Navigator.push(context, MaterialPageRoute(builder: (coontext)=>MainScreen(selectedamount:ludoProvider.entryAmount.toString())));
               // Navigator.pushReplacementNamed(context, RoutesName.ludoHomeScreen, arguments: argument);
               _hasNavigated = true;
             });
