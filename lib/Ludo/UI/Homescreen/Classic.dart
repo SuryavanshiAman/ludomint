@@ -1,20 +1,26 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ludomint/Ludo/UI/Homescreen/create_join_room_screen.dart';
 import 'package:ludomint/Ludo/UI/Homescreen/money/Rechargeamount.dart';
+import 'package:ludomint/Ludo/UI/constant/api%20constant.dart';
 import 'package:ludomint/Ludo/UI/constant/utilll.dart';
 import 'package:ludomint/ludo_provider.dart';
 import 'package:ludomint/main.dart';
+import 'package:ludomint/view_model/join_match_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../audio.dart';
 import '../constant/images.dart';
 import '../constant/style.dart';
 import 'api/apiprofile.dart';
 import 'jjellybutton.dart';
+import 'package:http/http.dart' as http;
 
 class Classic extends StatefulWidget {
   const Classic({Key? key}) : super(key: key);
@@ -59,6 +65,7 @@ class _ClassicState extends State<Classic> {
   @override
   Widget build(BuildContext context) {
     final roomCode = Provider.of<LudoProvider>(context);
+    final join = Provider.of<JoinViewModel>(context);
     return SafeArea(
         child: Dialog(
       backgroundColor: Colors.black,
@@ -189,28 +196,14 @@ class _ClassicState extends State<Classic> {
                     onTap: () {
                       Audio.sound();
                       if (amount.text.isNotEmpty && int.parse( wallet) >= int.parse(amount.text)) {
-                        Provider.of<LudoProvider>(context, listen: false)
-                            .createRoom(
-                          context,
-                        );
-
-                        Future.delayed(const Duration(seconds: 1), () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CreateJoinRoomScreen(status: "1")));
-                          Utils.flushBarsuccessMessage(
-                              "Room code generated: ${roomCode.roomCode}",
-                              context,
-                              Colors.white);
-                        });
+                        Provider.of<LudoProvider>(context, listen: false).createRoom(context,);
+                        createMatchApi(roomCode.entryAmount.toString(),"1",);
                       } else if(amount.text.isEmpty) {
-                        Utils.flushBarsuccessMessage(
+                        Utils.flushBarErrorMessage(
                             "First Select the Amount", context, Colors.white);
                       }else if ( int.parse( wallet) < int.parse(amount.text)){
                         Navigator.push(context, MaterialPageRoute(builder: (context) =>  recharge()));
-                        Utils.flushBarsuccessMessage(
+                        Utils.flushBarErrorMessage(
                             "You have insuffecient balance", context, Colors.white);
                       }
                     },
@@ -226,7 +219,7 @@ class _ClassicState extends State<Classic> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  const CreateJoinRoomScreen(status: "2")));
+                              const CreateJoinRoomScreen(status: "2")));
                     },
                     title: "Join  Room"),
               ],
@@ -247,4 +240,53 @@ class _ClassicState extends State<Classic> {
       ),
     ));
   }
+  createMatchApi(dynamic amount ,dynamic status) async {
+    final roomCode = Provider.of<LudoProvider>(context,listen: false);
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString("userId");
+    print("Rooooom:${roomCode}");
+    final response = await http.post(
+        Uri.parse(AppConstants.createMatch),
+        headers: <String,String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic >{
+          "userid":userId.toString(),
+          "amount":amount.toString(),
+          "roomcode":roomCode.roomCode,
+          "status":"0"
+        })
+    );
+    if(response.statusCode==200){
+      final data = jsonDecode(response.body);
+
+        print(data);
+        print("👍👍👍👍update");
+      if(data["error"]=="200"){
+
+          Future.delayed(const Duration(seconds: 1), () {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                    const CreateJoinRoomScreen(status: "1")));
+            Utils.flushBarsuccessMessage(
+                "Room code generated: ${roomCode.roomCode}",
+                context,
+                Colors.white);
+          });
+          setState(() {
+            getprofile();
+          });
+      }
+      else {
+        Utils.flushBarErrorMessage(data["msg"], context, Colors.white);
+      }
+    }
+    else{
+      throw Exception("error");
+    }
+
+  }
+
 }

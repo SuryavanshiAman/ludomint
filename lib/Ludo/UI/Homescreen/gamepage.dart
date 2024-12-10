@@ -301,7 +301,7 @@ class _NumberthreeState extends State<Numberthree>  with WidgetsBindingObserver 
 
                         },
                     ),
-                    Text(wallet==null?"0":wallet.toString(), style: RighteousMedium.copyWith(fontSize: Dimensions.fontSizeDefault)),
+                    Text(wallet??"0.0", style: RighteousMedium.copyWith(fontSize: Dimensions.fontSizeDefault)),
                     InkWell(
                       child:Image.asset(AppAsset.buttonAdd),
                       onTap: (){

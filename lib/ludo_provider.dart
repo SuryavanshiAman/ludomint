@@ -447,15 +447,20 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ludomint/Ludo/UI/constant/utilll.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Ludo/UI/Homescreen/api/apiprofile.dart';
+import 'Ludo/UI/constant/api constant.dart';
 import 'constants.dart';
 
 import 'ludo_player.dart';
 
 import 'view_model/firebase_view_model.dart';
+import 'package:http/http.dart' as http;
 
 class LudoProvider with ChangeNotifier {
   bool _isMoving = false;
@@ -948,11 +953,6 @@ void setEntryAmount(int value){
     final playerColors = players;
     DocumentSnapshot documentSnapshot = await ludoCollection.doc(roomCode).get();
 
-    if (!documentSnapshot.exists) {
-      print("Room with code $roomCode does not exist.");
-      return;
-    }
-
     Map<String, dynamic>? existingData = documentSnapshot.data() as Map<String, dynamic>?;
 
     if (existingData != null) {
@@ -982,11 +982,18 @@ void setEntryAmount(int value){
         });
         setFieldKey(3);
         print("Player joined as Player 2 in room $roomCode");
+
+        if (!documentSnapshot.exists) {
+          print("Room with code $roomCode does not exist.");
+          return;
+        }
+
         setRoomCode(roomCode); // Save the room code in the view model
       }
       firebaseViewModel.setTable(int.parse(roomCode.toString()));
     }
   }
+
   removePlayerData(context) async {
     final firebaseViewModel =
     Provider.of<FirebaseViewModel>(context, listen: false);

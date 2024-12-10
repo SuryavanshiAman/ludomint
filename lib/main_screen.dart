@@ -1,20 +1,24 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ludomint/Ludo/UI/Homescreen/api/apiprofile.dart';
+import 'package:ludomint/Ludo/UI/constant/utilll.dart';
 import 'package:ludomint/widgets/board_widget.dart';
 import 'package:ludomint/widgets/dice_widget.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'Ludo/UI/Homescreen/api/apiprofile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Ludo/UI/Homescreen/gamepage.dart';
 import 'Ludo/UI/Homescreen/jjellybutton.dart';
+import 'Ludo/UI/constant/api constant.dart';
 import 'Ludo/UI/constant/images.dart';
 import 'Ludo/UI/constant/style.dart';
 import 'constants.dart';
 import 'ludo_provider.dart';
 import 'main.dart';
 import 'view_model/firebase_view_model.dart';
+import 'package:http/http.dart' as http;
 
 class MainScreen extends StatefulWidget {
   final String selectedamount;
@@ -362,101 +366,107 @@ class _MainScreenState extends State<MainScreen> {
             oppentsTurn(player3Data),
 
             Consumer<LudoProvider>(
-              builder: (context, value, child) => value.winners.length == 1
-                  ? Container(
-                      color: Colors.black.withOpacity(0.8),
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                _triggerConfetti(); // Trigger confetti animation here
-                              },
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "Celebrate",
-                                    style: RighteousRegular.copyWith(
-                                        fontSize: width * 0.04,
-                                        color: Colors.white),
+              builder: (context, value, child) {
+                if(value.winners.length == 1){
+                  winningMatch(data['entryAmount'].toString());
+                  return Container(
+                    color: Colors.black.withOpacity(0.8),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              _triggerConfetti(); // Trigger confetti animation here
+                            },
+                            child: Column(
+                              children: [
+                                Text(
+                                  "Celebrate",
+                                  style: RighteousRegular.copyWith(
+                                      fontSize: width * 0.04,
+                                      color: Colors.white),
+                                ),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: ConfettiWidget(
+                                    confettiController: _confettiController!,
+                                    blastDirectionality: BlastDirectionality
+                                        .explosive, // don't specify a direction, blast randomly
+                                    shouldLoop:
+                                    false, // start again as soon as the animation is finished
+                                    colors: const [
+                                      Colors.green,
+                                      Colors.blue,
+                                      Colors.pink,
+                                      Colors.orange,
+                                      Colors.purple
+                                    ], // manually specify the colors to be used
+                                    createParticlePath:
+                                    drawStar, // define a custom shape/path.
                                   ),
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: ConfettiWidget(
-                                      confettiController: _confettiController!,
-                                      blastDirectionality: BlastDirectionality
-                                          .explosive, // don't specify a direction, blast randomly
-                                      shouldLoop:
-                                          false, // start again as soon as the animation is finished
-                                      colors: const [
-                                        Colors.green,
-                                        Colors.blue,
-                                        Colors.pink,
-                                        Colors.orange,
-                                        Colors.purple
-                                      ], // manually specify the colors to be used
-                                      createParticlePath:
-                                          drawStar, // define a custom shape/path.
-                                    ),
-                                  ),
+                                ),
 
-                                  //TOP CENTER - shoot down
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: ConfettiWidget(
-                                      confettiController: _confettiController!,
-                                      blastDirectionality:
-                                          BlastDirectionality.explosive,
-                                      emissionFrequency: 0.01,
-                                      numberOfParticles: 20,
-                                      maxBlastForce: 100,
-                                      minBlastForce: 80,
-                                      gravity: 0.3,
-                                    ),
+                                //TOP CENTER - shoot down
+                                Align(
+                                  alignment: Alignment.topCenter,
+                                  child: ConfettiWidget(
+                                    confettiController: _confettiController!,
+                                    blastDirectionality:
+                                    BlastDirectionality.explosive,
+                                    emissionFrequency: 0.01,
+                                    numberOfParticles: 20,
+                                    maxBlastForce: 100,
+                                    minBlastForce: 80,
+                                    gravity: 0.3,
                                   ),
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: ConfettiWidget(
-                                      confettiController: _confettiController!,
-                                      blastDirection: pi / 2,
-                                      maxBlastForce:
-                                          5, // set a lower max blast force
-                                      minBlastForce:
-                                          2, // set a lower min blast force
-                                      emissionFrequency: 0.05,
-                                      numberOfParticles:
-                                          50, // a lot of particles at once
-                                      gravity: 1,
-                                    ),
+                                ),
+                                Align(
+                                  alignment: Alignment.topCenter,
+                                  child: ConfettiWidget(
+                                    confettiController: _confettiController!,
+                                    blastDirection: pi / 2,
+                                    maxBlastForce:
+                                    5, // set a lower max blast force
+                                    minBlastForce:
+                                    2, // set a lower min blast force
+                                    emissionFrequency: 0.05,
+                                    numberOfParticles:
+                                    50, // a lot of particles at once
+                                    gravity: 1,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            SizedBox(
-                              height: height * 0.09,
-                            ),
-                            Image.asset("assets/images/thankyou.gif"),
-                            const Text("Thank you for playing 😙",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                                textAlign: TextAlign.center),
-                            Text(
-                                "The Winners is: ${value.winners.map((e) => e.name.toUpperCase()).join(", ")}",
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 30),
-                                textAlign: TextAlign.center),
-                            const Divider(color: Colors.white),
-                            const SizedBox(height: 20),
-                            const Text("Refresh your browser to play again",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 10),
-                                textAlign: TextAlign.center),
-                          ],
-                        ),
+                          ),
+                          SizedBox(
+                            height: height * 0.09,
+                          ),
+                          Image.asset("assets/images/thankyou.gif"),
+                          const Text("Thank you for playing 😙",
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 20),
+                              textAlign: TextAlign.center),
+                          Text(
+                              "The Winners is: ${value.winners.map((e) => e.name.toUpperCase()).join(", ")}",
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 30),
+                              textAlign: TextAlign.center),
+                          const Divider(color: Colors.white),
+                          const SizedBox(height: 20),
+                          const Text("Refresh your browser to play again",
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 10),
+                              textAlign: TextAlign.center),
+                        ],
                       ),
-                    )
-                  : const SizedBox.shrink(),
+                    ),
+                  );
+                }else {
+                  return const SizedBox.shrink();
+                }
+              }
+
             ),
             showGif
                 ? Container(
@@ -814,4 +824,44 @@ class _MainScreenState extends State<MainScreen> {
       },
     );
   }
+  winningMatch(dynamic amount) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString("userId");
+
+    print("Aman:$userId");
+    print("userid:${ userId.toString()}",);
+    print("amount:${ amount.toString()}");
+    final response = await http.post(
+        Uri.parse(AppConstants.winningMatch),
+        headers: <String,String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic >{
+          "userid":userId.toString(),
+          "amount":amount.toString()
+        })
+
+
+    );
+    if(response.statusCode==200){
+      final data = jsonDecode(response.body);
+
+      print(data);
+      print("👍👍👍👍update");
+
+      if(data["error"]=="200"){
+        setState(() {
+          getprofile();
+        });
+      }
+      else {
+        Utils.flushBarErrorMessage(data["msg"], context, Colors.white);
+      }
+    }
+    else{
+      throw Exception("error");
+    }
+
+  }
+
 }

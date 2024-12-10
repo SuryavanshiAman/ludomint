@@ -9,6 +9,7 @@ import 'Ludo/UI/Homescreen/Splash.dart';
 import 'ludo_provider.dart';
 import 'view_model/create_joine_view_model.dart';
 import 'view_model/firebase_view_model.dart';
+import 'view_model/join_match_view_model.dart';
 
 Future<void> main() async  {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +45,7 @@ class _RootState extends State<Root> {
       providers: [
         ChangeNotifierProvider(create: (_) => FirebaseViewModel()),
         ChangeNotifierProvider(create: (_) => CreateJoinViewModel()),
+        ChangeNotifierProvider(create: (_) => JoinViewModel()),
 
       ],
       child: const MaterialApp(

@@ -1,14 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
+import 'package:ludomint/Ludo/UI/Homescreen/api/apiprofile.dart';
+import 'package:ludomint/Ludo/UI/constant/api%20constant.dart';
 import 'package:ludomint/Ludo/UI/constant/clipboard.dart';
 import 'package:ludomint/Ludo/UI/constant/images.dart';
+import 'package:ludomint/Ludo/UI/constant/utilll.dart';
 import 'package:ludomint/audio.dart';
 import 'package:ludomint/ludo_provider.dart';
 import 'package:ludomint/main.dart';
 import 'package:ludomint/view_model/create_joine_view_model.dart';
 import 'package:provider/provider.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'jjellybutton.dart';
 
 class CreateJoinRoomScreen extends StatefulWidget {
@@ -175,8 +181,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen> {
   }
 
   Widget joinWithRoomCode() {
-    final cJVMCon = Provider.of<CreateJoinViewModel>(context);
-    final ludo = Provider.of<LudoProvider>(context);
+
     return Column(
       children: [
         TextField(
@@ -200,10 +205,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen> {
         JellyButton(
             onTap: () {
               Audio.sound();
-              ludo.joinRoom(context, joinRoomCon.text.trim()).then((value) {
-                cJVMCon.navigateToWaitingScreen(
-                    context, joinRoomCon.text.trim());
-              });
+              joinApi(joinRoomCon.text.trim());
             },
             title: "Join  Room"),
 
@@ -239,5 +241,47 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen> {
         text: '*${"LudoMint"}* \n  Create room and play ludo with your friends. Entry amount is ₹${roomCode.entryAmount}',
         linkUrl: 'Room Code: ${roomCode.roomCode}',
         chooserTitle: 'Room Code: ${roomCode.roomCode}');
+  }
+  joinApi(dynamic roomCode) async {
+    print("🤡🤡🤡🤡");
+    final cJVMCon = Provider.of<CreateJoinViewModel>(context,listen: false);
+    final ludo = Provider.of<LudoProvider>(context,listen: false);
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString("userId");
+    print("Aman:$userId");
+    print("Aman:$roomCode");
+    final response = await http.post(
+        Uri.parse("https://root.ludomint.in/index.php/api/Mobile_app/join_roomcode"),
+        headers: <String,String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic >{
+          "userid":userId,
+          "roomcode":roomCode,
+          "status":"1"
+        })
+    );
+    print("Aman${response.body}");
+    if(response.statusCode==200){
+      final data = jsonDecode(response.body);
+      print(data);
+      print("👍👍👍👍update");
+      if(data["error"]=="200"){
+        ludo.joinRoom(context, joinRoomCon.text.trim()).then((value) {
+          cJVMCon.navigateToWaitingScreen(
+              context, joinRoomCon.text.trim());
+        });
+        setState(() {
+          getprofile();
+        });
+      }
+      else {
+        Utils.flushBarErrorMessage(data["msg"], context, Colors.white);
+      }
+    }
+    else{
+      throw Exception("error");
+    }
+
   }
 }

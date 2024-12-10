@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 class AppConstants {
+  static const int timeOut = 30;
   static const String fontFamily = 'Roboto';
   static const String fontAcme = 'Acme';
   static const String fontRighteous = 'Righteous';
@@ -37,4 +38,7 @@ class AppConstants {
       '${Baseurl}withdrawal_banklist?userid=';
   static const String withdrawalMoney = '${Baseurl}withdrawl';
   static const String Addmoney = '${Baseurl}payin';
+  static const String createMatch = '${Baseurl}join_match';
+  static const String joinMatch = '${Baseurl}join_roomcode';
+  static const String winningMatch = '${Baseurl}winning_match';
 }
