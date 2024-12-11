@@ -33,7 +33,7 @@ class CreateJoinViewModel extends ChangeNotifier {
 
 
   navigateToWaitingScreen(BuildContext context, String roomCode) {
-    Navigator.push(
+    Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (context) => const TimerScreen()));

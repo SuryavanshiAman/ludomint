@@ -1006,7 +1006,7 @@ void setEntryAmount(int value){
     int fieldKey = ludoProvider.fieldKey + 1;
 
     // Update Firestore to remove the current player's data
-    await ludoCollection.doc(documentID).update({
+    await ludoCollection.doc(roomCode).update({
       fieldKey.toString(): '', // Clear the player's data
     });
 

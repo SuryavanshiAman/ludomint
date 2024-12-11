@@ -99,6 +99,7 @@ class Assets {
   static const String imagesLoadernew = 'assets/images/loadernew.gif';
   static const String imagesLogoleaderboard = 'assets/images/logoleaderboard.png';
   static const String imagesLogonew = 'assets/images/logonew.png';
+  static const String imagesLoos = 'assets/images/loos.png';
   static const String imagesLudoBG  = 'assets/images/LudoBG .png';
   static const String imagesLudobg = 'assets/images/ludobg.png';
   static const String imagesLudobgwithlogo = 'assets/images/Ludobgwithlogo.png';

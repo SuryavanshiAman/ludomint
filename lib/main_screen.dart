@@ -2,7 +2,10 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ludomint/Ludo/UI/Homescreen/api/apiprofile.dart';
+import 'package:ludomint/Ludo/UI/Homescreen/jellybuttonn.dart';
+import 'package:ludomint/Ludo/UI/Homescreen/test2.dart';
 import 'package:ludomint/Ludo/UI/constant/utilll.dart';
+import 'package:ludomint/audio.dart';
 import 'package:ludomint/widgets/board_widget.dart';
 import 'package:ludomint/widgets/dice_widget.dart';
 import 'package:confetti/confetti.dart';
@@ -48,7 +51,6 @@ class _MainScreenState extends State<MainScreen> {
         ConfettiController(duration: const Duration(seconds: 10));
     // TODO: implement initState
     super.initState();
-
   }
 
   void _triggerConfetti() {
@@ -84,29 +86,100 @@ class _MainScreenState extends State<MainScreen> {
     return path;
   }
 
+  bool win = false;
   @override
   Widget build(BuildContext context) {
+    final ludoProvider = Provider.of<LudoProvider>(context);
     final documentID = Provider.of<FirebaseViewModel>(context);
     final docId = documentID.table.toString();
     CollectionReference ludoCollection =
-    FirebaseFirestore.instance.collection('ludo');
-    return Scaffold(
-      body:  StreamBuilder<DocumentSnapshot>(
+        FirebaseFirestore.instance.collection('ludo');
+    return WillPopScope(
+      onWillPop: () async {
+        final shouldPop = await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return Dialog(
+                backgroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(39)),
+                child: Container(
+                  height: height * 0.3,
+                  decoration: BoxDecoration(
+                      border:
+                          Border.all(color: Colors.yellow.shade800, width: 3),
+                      borderRadius: BorderRadius.circular(40)),
+                  child: Column(
+                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: InkWell(
+                            child: Image.asset(AppAsset.imagesCross,
+                                height: height / 25),
+                            onTap: () {
+                              Audio.sound();
+                              Navigator.pop(context);
+                            }),
+                      ),
+                      Text("EXIT",
+                          style: RighteousMedium.copyWith(
+                              fontSize: height * 0.028, color: Colors.white)),
+                      SizedBox(height: height / 30),
+                      Text("Are you sure you  want to quit game?",
+                          style: RighteousMedium.copyWith(
+                              fontSize: height * 0.023, color: Colors.white)),
+                      SizedBox(height: height * 0.04),
+                      SizedBox(
+                        width: width * 4,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            JellyButtonn(
+                                onTap: () {
+                                  setState(() {
+                                    win = true;
+                                  });
+                                  ludoProvider.removePlayerData(context);
+
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Numberthree()));
+                                  Audio.audioPlayer.stop();
+                                  Audio.audioPlayers.stop();
+                                },
+                                title: 'Yes'),
+                            JellyButtonn(
+                                onTap: () {
+                                  Navigator.pop(context, false);
+                                },
+                                title: 'No'),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ));
+          },
+        );
+        return shouldPop!;
+      },
+      child: Scaffold(
+          body: StreamBuilder<DocumentSnapshot>(
         stream: ludoCollection.doc(docId).snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData || !snapshot.data!.exists) {
             return const Center(child: CircularProgressIndicator());
           }
           Map<String, dynamic> data =
-          snapshot.data!.data() as Map<String, dynamic>;
+              snapshot.data!.data() as Map<String, dynamic>;
 
-          return Stack(
-              children: [
-                _buildDynamicContent(context, data),
-
-              ]);
+          return Stack(children: [
+            _buildDynamicContent(context, data),
+          ]);
         },
-      )
+      )),
     );
   }
 
@@ -277,16 +350,6 @@ class _MainScreenState extends State<MainScreen> {
                                         );
                                       },
                                     ),
-                                    // Switch(
-                                    //   value: isSwitchedtwo,
-                                    //   onChanged: (value) {
-                                    //     setState(() {
-                                    //       isSwitchedtwo = value;
-                                    //     });
-                                    //   },
-                                    //   activeTrackColor: Colors.lightGreenAccent,
-                                    //   activeColor: Colors.green,
-                                    // ),
                                   ],
                                 ),
                               ),
@@ -297,7 +360,88 @@ class _MainScreenState extends State<MainScreen> {
                               ),
                               JellyButton(
                                   onTap: () async {
-                                     ludoProvider.dispose();
+                                    Dialog(
+                                        backgroundColor: Colors.black,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(39)),
+                                        child: Container(
+                                          height: height * 0.3,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.yellow.shade800,
+                                                  width: 3),
+                                              borderRadius:
+                                                  BorderRadius.circular(40)),
+                                          child: Column(
+                                            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Align(
+                                                alignment: Alignment.topRight,
+                                                child: InkWell(
+                                                    child: Image.asset(
+                                                        AppAsset.imagesCross,
+                                                        height: height / 25),
+                                                    onTap: () {
+                                                      Audio.sound();
+                                                      Navigator.pop(context);
+                                                    }),
+                                              ),
+                                              Text("EXIT",
+                                                  style:
+                                                      RighteousMedium.copyWith(
+                                                          fontSize:
+                                                              height * 0.028,
+                                                          color: Colors.white)),
+                                              SizedBox(height: height / 30),
+                                              Text(
+                                                  "Are you sure you  want to quit game?",
+                                                  style:
+                                                      RighteousMedium.copyWith(
+                                                          fontSize:
+                                                              height * 0.023,
+                                                          color: Colors.white)),
+                                              SizedBox(height: height * 0.04),
+                                              SizedBox(
+                                                width: width * 4,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    JellyButtonn(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            win = true;
+                                                          });
+                                                          ludoProvider
+                                                              .removePlayerData(
+                                                                  context);
+                                                          Navigator.pushReplacement(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          Numberthree()));
+                                                          Audio.audioPlayer
+                                                              .stop();
+                                                          Audio.audioPlayers
+                                                              .stop();
+                                                        },
+                                                        title: 'Yes'),
+                                                    JellyButtonn(
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context, false);
+                                                        },
+                                                        title: 'No'),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ));
+                                    ludoProvider.dispose();
                                     Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
@@ -318,24 +462,24 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
+
   Widget _buildDynamicContent(BuildContext context, Map<String, dynamic> data) {
-    final ludoProvider = Provider.of<LudoProvider>(context);
     Map<String, dynamic> player1Data =
-    (data['1'] != null && data['1'].isNotEmpty)
-        ? json.decode(data['1'])
-        : {};
+        (data['1'] != null && data['1'].isNotEmpty)
+            ? json.decode(data['1'])
+            : {};
     Map<String, dynamic> player2Data =
-    (data['2'] != null && data['2'].isNotEmpty)
-        ? json.decode(data['2'])
-        : {};
+        (data['2'] != null && data['2'].isNotEmpty)
+            ? json.decode(data['2'])
+            : {};
     Map<String, dynamic> player3Data =
-    (data['3'] != null && data['3'].isNotEmpty)
-        ? json.decode(data['3'])
-        : {};
+        (data['3'] != null && data['3'].isNotEmpty)
+            ? json.decode(data['3'])
+            : {};
     Map<String, dynamic> player4Data =
-    (data['4'] != null && data['4'].isNotEmpty)
-        ? json.decode(data['4'])
-        : {};
+        (data['4'] != null && data['4'].isNotEmpty)
+            ? json.decode(data['4'])
+            : {};
 
     final List<Map<String, dynamic>> playerData = [
       player1Data,
@@ -344,364 +488,104 @@ class _MainScreenState extends State<MainScreen> {
       player4Data
     ];
 
-    return
-      Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage(AppAsset.imagesLudobg), fit: BoxFit.fill)),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            appBarContent(data),
-             const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                BoardWidget(),
-              ],
-            ),
-
-
-            userDiseDesing(player1Data),
-
-            oppentsTurn(player3Data),
-
-            Consumer<LudoProvider>(
-              builder: (context, value, child) {
-                if(value.winners.length == 1){
-                  winningMatch(data['entryAmount'].toString());
-                  return Container(
-                    color: Colors.black.withOpacity(0.8),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              _triggerConfetti(); // Trigger confetti animation here
-                            },
-                            child: Column(
-                              children: [
-                                Text(
-                                  "Celebrate",
-                                  style: RighteousRegular.copyWith(
-                                      fontSize: width * 0.04,
-                                      color: Colors.white),
-                                ),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: ConfettiWidget(
-                                    confettiController: _confettiController!,
-                                    blastDirectionality: BlastDirectionality
-                                        .explosive, // don't specify a direction, blast randomly
-                                    shouldLoop:
-                                    false, // start again as soon as the animation is finished
-                                    colors: const [
-                                      Colors.green,
-                                      Colors.blue,
-                                      Colors.pink,
-                                      Colors.orange,
-                                      Colors.purple
-                                    ], // manually specify the colors to be used
-                                    createParticlePath:
-                                    drawStar, // define a custom shape/path.
-                                  ),
-                                ),
-
-                                //TOP CENTER - shoot down
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: ConfettiWidget(
-                                    confettiController: _confettiController!,
-                                    blastDirectionality:
-                                    BlastDirectionality.explosive,
-                                    emissionFrequency: 0.01,
-                                    numberOfParticles: 20,
-                                    maxBlastForce: 100,
-                                    minBlastForce: 80,
-                                    gravity: 0.3,
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: ConfettiWidget(
-                                    confettiController: _confettiController!,
-                                    blastDirection: pi / 2,
-                                    maxBlastForce:
-                                    5, // set a lower max blast force
-                                    minBlastForce:
-                                    2, // set a lower min blast force
-                                    emissionFrequency: 0.05,
-                                    numberOfParticles:
-                                    50, // a lot of particles at once
-                                    gravity: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: height * 0.09,
-                          ),
-                          Image.asset("assets/images/thankyou.gif"),
-                          const Text("Thank you for playing 😙",
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 20),
-                              textAlign: TextAlign.center),
-                          Text(
-                              "The Winners is: ${value.winners.map((e) => e.name.toUpperCase()).join(", ")}",
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 30),
-                              textAlign: TextAlign.center),
-                          const Divider(color: Colors.white),
-                          const SizedBox(height: 20),
-                          const Text("Refresh your browser to play again",
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 10),
-                              textAlign: TextAlign.center),
-                        ],
+    return Container(
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage(AppAsset.imagesLudobg), fit: BoxFit.fill)),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          appBarContent(data),
+          const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              BoardWidget(),
+            ],
+          ),
+          userDiseDesing(player1Data),
+          oppentsTurn(player3Data),
+          Consumer<LudoProvider>(builder: (context, value, child) {
+            if (value.winners.length == 1 ||
+                data['3'].isEmpty ||
+                data['1'].isEmpty) {
+              // value.winners.map((e) => e.name.toUpperCase()).join(", ").trim()==LudoPlayerType.green.toString()?print("AMan KI Jaiho"):print("YE kya hua");
+              winningMatch(
+                  data['entryAmount'].toString(), data['roomCode'].toString());
+              _triggerConfetti();
+              return Container(
+                color: Colors.black.withOpacity(0.8),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: height * 0.09,
                       ),
-                    ),
-                  );
-                }else {
-                  return const SizedBox.shrink();
-                }
-              }
-
-            ),
-            showGif
-                ? Container(
-                    height: height / 5,
-                    width: width / 2,
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(AppAsset.imagesLetsplay),
-                            fit: BoxFit.fill)),
-                  )
-                : Container(),
-          ],
-        ),
-      );
-
-    //   Container(
-    //   height: height,
-    //   width: width,
-    //   decoration: const BoxDecoration(
-    //       image: DecorationImage(
-    //           image: AssetImage(Assets.imagesLudoHomeBg), fit: BoxFit.fill)),
-    //   child: Column(
-    //     children: [
-    //       Row(
-    //         mainAxisAlignment: MainAxisAlignment.end,
-    //         children: [
-    //           SizedBox(
-    //             width: width * 0.1,
-    //           ),
-    //           Container(
-    //               height: height * 0.07,
-    //               width: width * 0.45,
-    //               decoration: const BoxDecoration(
-    //                   image: DecorationImage(
-    //                       image: AssetImage(Assets.ludoPrizePool),
-    //                       fit: BoxFit.fill)),
-    //               child: Column(
-    //                 children: [
-    //                   const Padding(
-    //                     padding: EdgeInsets.only(left: 12.0),
-    //                     child: Text(
-    //                       "Prize Pool",
-    //                       style: TextStyle(
-    //                           color: Colors.white,
-    //                           fontWeight: FontWeight.w600,
-    //                           fontSize: 11),
-    //                     ),
-    //                   ),
-    //                   Text(
-    //                     "₹${timerProvider.amount.toString()}",
-    //                     style: const TextStyle(
-    //                         color: Colors.white,
-    //                         fontWeight: FontWeight.w600,
-    //                         fontSize: 13),
-    //                   ),
-    //                 ],
-    //               )),
-    //           SizedBox(
-    //             width: width * 0.14,
-    //           ),
-    //           SizedBox(
-    //               height: height * 0.04,
-    //               child: const Image(image: AssetImage(Assets.ludoSetting))),
-    //           SizedBox(
-    //             width: width * 0.03,
-    //           )
-    //         ],
-    //       ),
-    //       SizedBox(
-    //         height: height * 0.02,
-    //       ),
-    //       Container(
-    //           alignment: Alignment.center,
-    //           padding: const EdgeInsets.only(left: 2, right: 2),
-    //           height: height * 0.033,
-    //           width: width * 0.24,
-    //           decoration: BoxDecoration(
-    //               borderRadius: BorderRadius.circular(15),
-    //               image: const DecorationImage(
-    //                   image: AssetImage(Assets.ludoLabelSection),
-    //                   fit: BoxFit.fill)),
-    //           child: Row(
-    //             mainAxisAlignment: MainAxisAlignment.spaceAround,
-    //             children: [
-    //               const Icon(
-    //                 Icons.watch_later_outlined,
-    //                 color: white,
-    //                 size: 19,
-    //               ),
-    //               Text(timerProvider.timerText.toString(),
-    //                   style: const TextStyle(
-    //                       color: green,
-    //                       fontFamily: "digital",
-    //                       fontWeight: FontWeight.w600,
-    //                       fontSize: 20)),
-    //             ],
-    //           )),
-    //       Row(
-    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //         children: [
-    //           Container(
-    //               alignment: Alignment.center,
-    //               height: height * 0.03,
-    //               width: width * 0.23,
-    //               decoration: const BoxDecoration(
-    //                   image: DecorationImage(
-    //                       image: AssetImage(Assets.ludoLabelSection),
-    //                       fit: BoxFit.fill)),
-    //               child: Text(player1Data['name'].toString(),
-    //                   style: const TextStyle(
-    //                       color: Colors.white,
-    //                       fontWeight: FontWeight.w600,
-    //                       fontSize: 12))),
-    //           Image(
-    //             image: const AssetImage(
-    //               Assets.ludoInfo,
-    //             ),
-    //             height: height * 0.03,
-    //             width: width * 0.08,
-    //             fit: BoxFit.fill,
-    //           ),
-    //           const Spacer(),
-    //           ludoProvider.playerQuantity != 2
-    //               ? Image(
-    //             image: const AssetImage(
-    //               Assets.ludoInfo,
-    //             ),
-    //             height: height * 0.03,
-    //             width: width * 0.08,
-    //             fit: BoxFit.fill,
-    //           )
-    //               : Container(),
-    //           ludoProvider.playerQuantity != 2
-    //               ? Container(
-    //               alignment: Alignment.center,
-    //               height: height * 0.03,
-    //               width: width * 0.23,
-    //               decoration: const BoxDecoration(
-    //                   image: DecorationImage(
-    //                       image: AssetImage(Assets.ludoLabelSectionTwo),
-    //                       fit: BoxFit.fill)),
-    //               child: Text(player2Data['name'] ?? 'No Name',
-    //                   style: const TextStyle(
-    //                       color: Colors.white,
-    //                       fontWeight: FontWeight.w600,
-    //                       fontSize: 12)))
-    //               : Container(),
-    //         ],
-    //       ),
-    //       Padding(
-    //         padding: const EdgeInsets.all(6.0),
-    //         child: Row(
-    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //           children: [
-    //
-    //             userDiceDesign(playerData),
-    //             const Spacer(),
-    //             ludoProvider.playerQuantity != 2
-    //                 ? opponentsOneTurn(playerData)
-    //                 : Container(),
-    //
-    //           ],
-    //         ),
-    //       ),
-    //       BoardWidget(playerData: playerData),
-    //       Padding(
-    //         padding: const EdgeInsets.all(16.0),
-    //         child: Row(
-    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //           children: [
-    //
-    //
-    //             ludoProvider.playerQuantity != 2
-    //                 ? opponentsTwoTurn(playerData)
-    //                 : Container(),
-    //             const Spacer(),
-    //             opponentsThreeTurn(playerData),
-    //           ],
-    //         ),
-    //       ),
-    //       Row(
-    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //         children: [
-    //           ludoProvider.playerQuantity != 2
-    //               ? Container(
-    //               alignment: Alignment.center,
-    //               height: height * 0.03,
-    //               width: width * 0.23,
-    //               decoration: const BoxDecoration(
-    //                   image: DecorationImage(
-    //                       image: AssetImage(Assets.ludoLabelSection),
-    //                       fit: BoxFit.fill)),
-    //               child: Text(player4Data['name'] ?? 'No Name',
-    //                   style: const TextStyle(
-    //                       color: Colors.white,
-    //                       fontWeight: FontWeight.w600,
-    //                       fontSize: 12)))
-    //               : Container(),
-    //           ludoProvider.playerQuantity != 2
-    //               ? Image(
-    //             image: const AssetImage(
-    //               Assets.ludoInfo,
-    //             ),
-    //             height: height * 0.03,
-    //             width: width * 0.08,
-    //             fit: BoxFit.fill,
-    //           )
-    //               : Container(),
-    //           const Spacer(),
-    //           Image(
-    //             image: const AssetImage(
-    //               Assets.ludoInfo,
-    //             ),
-    //             height: height * 0.03,
-    //             width: width * 0.08,
-    //             fit: BoxFit.fill,
-    //           ),
-    //           Container(
-    //               alignment: Alignment.center,
-    //               height: height * 0.03,
-    //               width: width * 0.23,
-    //               decoration: const BoxDecoration(
-    //                   image: DecorationImage(
-    //                       image: AssetImage(Assets.ludoLabelSectionTwo),
-    //                       fit: BoxFit.fill)),
-    //               child: Text(player3Data['name'] ?? 'No Name',
-    //                   style: const TextStyle(
-    //                       color: Colors.white,
-    //                       fontWeight: FontWeight.w600,
-    //                       fontSize: 12))),
-    //         ],
-    //       ),
-    //     ],
-    //   ),
-    // );
+                      Image.asset("assets/images/thankyou.gif"),
+                      const Text("Thank you for playing 😙",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          textAlign: TextAlign.center),
+                      Text(
+                          value.winners.length == 1
+                              ? "The Winners is: ${value.winners.map((e) => e.name.toUpperCase()).join(", ")}"
+                              : data['3'].isEmpty
+                                  ? "The Winners is:${player1Data['name']} "
+                                  : "The Winners is:${player3Data['name']} ",
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 30),
+                          textAlign: TextAlign.center),
+                      const Divider(color: Colors.white),
+                      const SizedBox(height: 20),
+                      const Text("Refresh your browser to play again",
+                          style: TextStyle(color: Colors.white, fontSize: 10),
+                          textAlign: TextAlign.center),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return value.winners.length == 1 && data['3'] != null
+                  ? Container(
+                      color: Colors.black.withOpacity(0.8),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              height: height * 0.09,
+                            ),
+                            Image.asset("assets/images/loos.png"),
+                            const Text("Thank you for playing 😙",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
+                                textAlign: TextAlign.center),
+                            const Divider(color: Colors.white),
+                            const SizedBox(height: 20),
+                            const Text(
+                                "Join contest or Create contest to play again",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 10),
+                                textAlign: TextAlign.center),
+                          ],
+                        ),
+                      ),
+                    )
+                  : SizedBox.shrink();
+            }
+          }),
+          showGif
+              ? Container(
+                  height: height / 5,
+                  width: width / 2,
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(AppAsset.imagesLetsplay),
+                          fit: BoxFit.fill)),
+                )
+              : Container(),
+        ],
+      ),
+    );
   }
 
   Widget userDiseDesing(playerData) {
@@ -782,15 +666,14 @@ class _MainScreenState extends State<MainScreen> {
                     height: heights / 15,
                     width: widths / 10,
                     child: value.currentPlayer.type == LudoPlayerType.green
-                        ?  DiceWidget()
+                        ? DiceWidget()
                         : const SizedBox(),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 7),
                     child: Column(
                       children: [
-                        Text(
-                            player2Data['name'].toString(),
+                        Text(player2Data['name'].toString(),
                             // "Computer",
                             style: RighteousMedium.copyWith(
                                 fontSize: heights * 0.018,
@@ -824,44 +707,41 @@ class _MainScreenState extends State<MainScreen> {
       },
     );
   }
-  winningMatch(dynamic amount) async {
+
+  winningMatch(dynamic amount, dynamic roomCode) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString("userId");
 
     print("Aman:$userId");
-    print("userid:${ userId.toString()}",);
-    print("amount:${ amount.toString()}");
-    final response = await http.post(
-        Uri.parse(AppConstants.winningMatch),
-        headers: <String,String>{
+    print(
+      "userid:${userId.toString()}",
+    );
+    print("amount:${amount.toString()}");
+    final response = await http.post(Uri.parse(AppConstants.winningMatch),
+        headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, dynamic >{
-          "userid":userId.toString(),
-          "amount":amount.toString()
-        })
-
-
-    );
-    if(response.statusCode==200){
+        body: jsonEncode(<String, dynamic>{
+          "userid": userId.toString(),
+          "amount": amount.toString(),
+          "roomcode": roomCode,
+          "status": "2"
+        }));
+    if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
       print(data);
       print("👍👍👍👍update");
 
-      if(data["error"]=="200"){
+      if (data["error"] == "200") {
         setState(() {
           getprofile();
         });
-      }
-      else {
+      } else {
         Utils.flushBarErrorMessage(data["msg"], context, Colors.white);
       }
-    }
-    else{
+    } else {
       throw Exception("error");
     }
-
   }
-
 }
