@@ -32,7 +32,7 @@ class BoardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(10),
+      // margin: const EdgeInsets.all(10),
       clipBehavior: Clip.antiAlias,
       width: ludoBoard(context),
       height: ludoBoard(context),
@@ -230,7 +230,7 @@ class BoardWidget extends StatelessWidget {
                 textAlign: TextAlign.center,
                 text: TextSpan(
                     style: TextStyle(fontSize: 8, color: color),
-                    children: const [
+                    children:  [
                       // const TextSpan(text: "Your turn!\n", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                       // TextSpan(text: stageText, style: const TextStyle(color: Colors.black)),
                     ]),

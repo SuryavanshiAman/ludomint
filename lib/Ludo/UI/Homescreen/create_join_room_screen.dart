@@ -186,6 +186,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen> {
       children: [
         TextField(
           controller: joinRoomCon,
+          keyboardType: TextInputType.number,
           decoration: InputDecoration(
               contentPadding: const EdgeInsets.all(8),
               hintText: "Enter room code here...",
@@ -215,20 +216,23 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen> {
       ],
     );
   }
-
+bool circular=false;
   Widget generateRoomAndStartGame() {
     final cJVMCon = Provider.of<CreateJoinViewModel>(
       context,
     );
     return Column(
       children: [
-        JellyButton(
+        circular==false? JellyButton(
             color: CupertinoColors.activeOrange,
             onTap: () {
+              setState(() {
+                circular=true;
+              });
               Audio.sound();
               cJVMCon.startGame(context);
             },
-            title: "Start game"),
+            title: "Start game"):CircularProgressIndicator(),
         shareRoomCode()
       ],
     );

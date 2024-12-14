@@ -2,8 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:ludomint/Ludo/UI/constant/utilll.dart';
 import 'package:ludomint/constants.dart';
+import 'package:ludomint/generated/assets.dart';
 import 'package:ludomint/ludo_provider.dart';
 import 'package:ludomint/main.dart';
+import 'package:ludomint/widgets/image_tost.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 
@@ -31,11 +33,21 @@ class DiceWidget extends StatelessWidget {
               print("Aman${ludoProvider.fieldKey}");
               ludoProvider.throwDice(context);
             }else{
-              Utils.flushBarErrorMessage("First move pawn", context, Colors.white);
+              ImageToast.show(
+                  imagePath: Assets.imagesTextArea,
+                  height: height * 0.08,
+                  width: width * 0.6,
+                  context: context,
+                  text: "First move pawn");
             }
           } else {
             print("Aman");
-            Utils.flushBarErrorMessage("Its not your turn", context, Colors.white);
+            ImageToast.show(
+                imagePath: Assets.imagesTextArea,
+                height: height * 0.08,
+                width: width * 0.6,
+                context: context,
+                text: "It's not your turn");
           }
         },
         child: Container(

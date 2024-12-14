@@ -810,12 +810,17 @@ void setEntryAmount(int value){
     return killSomeone;
   }
 
-  void validateWin(LudoPlayerType color) {
+  Future<void> validateWin(LudoPlayerType color) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userid = prefs.getString("userId") ?? '0';
     if (winners.contains(color)) return;
     if (player(color)
         .pawns
         .every((pawn) => pawn.step == player(color).path.length - 1)) {
       winners.add(color);
+      FirebaseFirestore.instance.collection('ludo').doc(roomCode).update({
+        'winnerId': userid,
+      });
       notifyListeners();
     }
     if (winners.length == 3) {
@@ -902,6 +907,8 @@ void setEntryAmount(int value){
     notifyListeners();
   }
   void createRoom(context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString("userId");
     final firebaseViewModel = Provider.of<FirebaseViewModel>(context, listen: false);
     FirebaseFirestore fireStore = FirebaseFirestore.instance;
     CollectionReference ludoCollection = fireStore.collection('ludo');
@@ -917,7 +924,7 @@ void setEntryAmount(int value){
         print("Creating new room with code $roomCode");
         Map<String, dynamic> jsonData = {
           "roomCode": roomCode,
-          "1": '{"name":"$username","id":"$RndId","image":"$image","number":"$mobilenumber","color":"${playerColors[0].type}"}',
+          "1": '{"name":"$username","id":"$userId","image":"$image","number":"$mobilenumber","color":"${playerColors[0].type}","colors":"blue"}',
           "3": '', // Second player is empty initially
           "isLocked": false,
           "playerQuantity": 2, // Only 2 players are allowed
@@ -947,6 +954,8 @@ void setEntryAmount(int value){
   }
 
   joinRoom(context, String roomCode) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString("userId");
     final firebaseViewModel = Provider.of<FirebaseViewModel>(context, listen: false);
     FirebaseFirestore fireStore = FirebaseFirestore.instance;
     CollectionReference ludoCollection = fireStore.collection('ludo');
@@ -969,7 +978,7 @@ void setEntryAmount(int value){
       // If slot 1 is empty, join as player 1
       if (!slotsFilled[0]) {
         await ludoCollection.doc(roomCode).update({
-          "1": '{"name":"${username}","id":"${RndId}","image":"$image","number":"$mobilenumber","color":"${playerColors[0].type}"}'
+          "1": '{"name":"${username}","id":"${userId}","image":"$image","number":"$mobilenumber","color":"${playerColors[0].type}","colors":"blue"}'
         });
         setFieldKey(1);
         print("Player joined as Player 1 in room $roomCode");
@@ -978,7 +987,7 @@ void setEntryAmount(int value){
       // If slot 2 is empty, join as player 2
       else if (!slotsFilled[1]) {
         await ludoCollection.doc(roomCode).update({
-          "3": '{"name":"$username","id":"$RndId","image":"$image","number":"$mobilenumber","color":"${playerColors[2].type}"}'
+          "3": '{"name":"$username","id":"$userId","image":"$image","number":"$mobilenumber","color":"${playerColors[2].type}","colors":"green"}'
         });
         setFieldKey(3);
         print("Player joined as Player 2 in room $roomCode");

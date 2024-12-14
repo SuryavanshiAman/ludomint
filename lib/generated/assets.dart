@@ -135,6 +135,7 @@ class Assets {
   static const String imagesSoundnew = 'assets/images/soundnew.png';
   static const String imagesTelegramnew = 'assets/images/telegramnew.png';
   static const String imagesTen = 'assets/images/ten.png';
+  static const String imagesTextArea = 'assets/images/text_area.png';
   static const String imagesTextfiled = 'assets/images/textfiled.png';
   static const String imagesThankyou = 'assets/images/thankyou.gif';
   static const String imagesThree = 'assets/images/three.png';

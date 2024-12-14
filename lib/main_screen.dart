@@ -50,6 +50,7 @@ class _MainScreenState extends State<MainScreen> {
     _confettiController =
         ConfettiController(duration: const Duration(seconds: 10));
     // TODO: implement initState
+    getUserId();
     super.initState();
   }
 
@@ -60,6 +61,13 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+  String userid='';
+  getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userid = prefs.getString("userId") ?? '0';
+    });
   }
 
   Path drawStar(Size size) {
@@ -137,15 +145,13 @@ class _MainScreenState extends State<MainScreen> {
                           children: [
                             JellyButtonn(
                                 onTap: () {
-                                  setState(() {
-                                    win = true;
-                                  });
+
                                   ludoProvider.removePlayerData(context);
 
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => Numberthree()));
+                                          builder: (context) => const Numberthree()));
                                   Audio.audioPlayer.stop();
                                   Audio.audioPlayers.stop();
                                 },
@@ -411,9 +417,7 @@ class _MainScreenState extends State<MainScreen> {
                                                   children: [
                                                     JellyButtonn(
                                                         onTap: () {
-                                                          setState(() {
-                                                            win = true;
-                                                          });
+
                                                           ludoProvider
                                                               .removePlayerData(
                                                                   context);
@@ -422,7 +426,7 @@ class _MainScreenState extends State<MainScreen> {
                                                               MaterialPageRoute(
                                                                   builder:
                                                                       (context) =>
-                                                                          Numberthree()));
+                                                                          const Numberthree()));
                                                           Audio.audioPlayer
                                                               .stop();
                                                           Audio.audioPlayers
@@ -464,6 +468,8 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildDynamicContent(BuildContext context, Map<String, dynamic> data) {
+    CollectionReference ludoCollection =
+    FirebaseFirestore.instance.collection('ludo');
     Map<String, dynamic> player1Data =
         (data['1'] != null && data['1'].isNotEmpty)
             ? json.decode(data['1'])
@@ -505,13 +511,17 @@ class _MainScreenState extends State<MainScreen> {
           userDiseDesing(player1Data),
           oppentsTurn(player3Data),
           Consumer<LudoProvider>(builder: (context, value, child) {
-            if (value.winners.length == 1 ||
+            if (
                 data['3'].isEmpty ||
                 data['1'].isEmpty) {
-              // value.winners.map((e) => e.name.toUpperCase()).join(", ").trim()==LudoPlayerType.green.toString()?print("AMan KI Jaiho"):print("YE kya hua");
-              winningMatch(
-                  data['entryAmount'].toString(), data['roomCode'].toString());
-              _triggerConfetti();
+              if (win==false)
+                winningMatch(userid,
+                    data['entryAmount'].toString(), data['roomCode'].toString());
+            win=true;
+            Future.delayed(Duration(seconds: 3),(){
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Numberthree()));
+            });
+
               return Container(
                 color: Colors.black.withOpacity(0.8),
                 child: Center(
@@ -526,9 +536,10 @@ class _MainScreenState extends State<MainScreen> {
                           style: TextStyle(color: Colors.white, fontSize: 20),
                           textAlign: TextAlign.center),
                       Text(
-                          value.winners.length == 1
-                              ? "The Winners is: ${value.winners.map((e) => e.name.toUpperCase()).join(", ")}"
-                              : data['3'].isEmpty
+                          // value.winners.length == 1
+                          //     ? "The Winners is: ${value.winners.map((e) => e.name.toUpperCase()).join(", ")}"
+                          //     :
+                          data['3'].isEmpty
                                   ? "The Winners is:${player1Data['name']} "
                                   : "The Winners is:${player3Data['name']} ",
                           style: const TextStyle(
@@ -543,34 +554,79 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ),
               );
-            } else {
-              return value.winners.length == 1 && data['3'] != null
-                  ? Container(
-                      color: Colors.black.withOpacity(0.8),
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              height: height * 0.09,
-                            ),
-                            Image.asset("assets/images/loos.png"),
-                            const Text("Thank you for playing 😙",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                                textAlign: TextAlign.center),
-                            const Divider(color: Colors.white),
-                            const SizedBox(height: 20),
-                            const Text(
-                                "Join contest or Create contest to play again",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 10),
-                                textAlign: TextAlign.center),
-                          ],
+            }
+            else if(data["winnerId"] != null){
+              if (win==false)
+              winningMatch(data["winnerId"],
+                  data['entryAmount'].toString(), data['roomCode'].toString());
+              win=true;
+              Future.delayed(Duration(seconds: 3),(){
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Numberthree()));
+              });
+              if(data["winnerId"]==userid){
+                return Container(
+                  color: Colors.black.withOpacity(0.8),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: height * 0.09,
                         ),
-                      ),
-                    )
-                  : SizedBox.shrink();
+                        Image.asset("assets/images/thankyou.gif"),
+                        const Text("Thank you for playing 😙",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                            textAlign: TextAlign.center),
+                        Text(
+                            // value.winners.length == 1
+                            //     ? "The Winners is: ${value.winners.map((e) => e.name.toUpperCase()).join(", ")}"
+                            //     : data['3'].isEmpty
+                            //     ?
+                        "The Winners is:${name} ",
+                                // : "The Winners is:${player3Data['name']} ",
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 30),
+                            textAlign: TextAlign.center),
+                        const Divider(color: Colors.white),
+                        const SizedBox(height: 20),
+                        const Text("Refresh your browser to play again",
+                            style: TextStyle(color: Colors.white, fontSize: 10),
+                            textAlign: TextAlign.center),
+                      ],
+                    ),
+                  ),
+                );
+              }else{
+                return Container(
+                  color: Colors.black.withOpacity(0.8),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: height * 0.09,
+                        ),
+                        Image.asset("assets/images/loos.png"),
+                        const Text("Thank you for playing 😙",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                            textAlign: TextAlign.center),
+                        const Text("You Loos the match",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                            textAlign: TextAlign.center),
+                        const Divider(color: Colors.white),
+                        const SizedBox(height: 20),
+                        const Text("Refresh your browser to play again",
+                            style: TextStyle(color: Colors.white, fontSize: 10),
+                            textAlign: TextAlign.center),
+                      ],
+                    ),
+                  ),
+                );
+              }
+            }
+            else {
+              print("else too executed");
+              return const SizedBox.shrink();
             }
           }),
           showGif
@@ -666,7 +722,7 @@ class _MainScreenState extends State<MainScreen> {
                     height: heights / 15,
                     width: widths / 10,
                     child: value.currentPlayer.type == LudoPlayerType.green
-                        ? DiceWidget()
+                        ? const DiceWidget()
                         : const SizedBox(),
                   ),
                   Padding(
@@ -688,10 +744,10 @@ class _MainScreenState extends State<MainScreen> {
                               border: Border.all(color: Colors.white),
                               color: Colors.black),
                         ),
-                        Text(
+                        const Text(
                           // 'Score: ${value.totalPoints}',
                           'Score:10',
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                               color: Colors.white),
@@ -708,7 +764,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  winningMatch(dynamic amount, dynamic roomCode) async {
+  winningMatch(dynamic id,dynamic amount, dynamic roomCode) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString("userId");
 
@@ -722,7 +778,7 @@ class _MainScreenState extends State<MainScreen> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          "userid": userId.toString(),
+          "userid": id.toString(),
           "amount": amount.toString(),
           "roomcode": roomCode,
           "status": "2"

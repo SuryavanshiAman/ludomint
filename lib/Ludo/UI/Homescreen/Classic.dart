@@ -61,7 +61,7 @@ class _ClassicState extends State<Classic> {
   }
 
   var catogery;
-
+  bool circular=false;
   @override
   Widget build(BuildContext context) {
     final roomCode = Provider.of<LudoProvider>(context);
@@ -191,14 +191,18 @@ class _ClassicState extends State<Classic> {
                 SizedBox(
                   height: height * 0.03,
                 ),
-                JellyButton(
+                circular==false? JellyButton(
                     color: CupertinoColors.activeOrange,
                     onTap: () {
                       Audio.sound();
                       if (amount.text.isNotEmpty && int.parse( wallet) >= int.parse(amount.text)) {
+                        setState(() {
+                          circular=true;
+                        });
                         Provider.of<LudoProvider>(context, listen: false).createRoom(context,);
                         createMatchApi(roomCode.entryAmount.toString(),"1",);
-                      } else if(amount.text.isEmpty) {
+                      }
+                      else if(amount.text.isEmpty) {
                         Utils.flushBarErrorMessage(
                             "First Select the Amount", context, Colors.white);
                       }else if ( int.parse( wallet) < int.parse(amount.text)){
@@ -207,7 +211,7 @@ class _ClassicState extends State<Classic> {
                             "You have insuffecient balance", context, Colors.white);
                       }
                     },
-                    title: "Create Room"),
+                    title: "Create Room"):CircularProgressIndicator(),
                 SizedBox(
                   height: height * 0.03,
                 ),
