@@ -41,4 +41,5 @@ class AppConstants {
   static const String createMatch = '${Baseurl}join_match';
   static const String joinMatch = '${Baseurl}join_roomcode';
   static const String winningMatch = '${Baseurl}winning_match';
+  static const String privacy = '${Baseurl}get_privacy_policy';
 }
