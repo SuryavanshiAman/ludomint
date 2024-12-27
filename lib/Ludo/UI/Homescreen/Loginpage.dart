@@ -271,7 +271,7 @@ class _numberoneState extends State<numberone> {
   otpurl(String phonenumber, status, user_id) async {
     final response = await http.get(
       Uri.parse(
-          '${AppConstants.Send_otp}mobile=$phonenumber&digit=4&mode=test'),
+          '${AppConstants.Send_otp}mobile=$phonenumber&digit=4&mode=live'),
     );
 
     var data = jsonDecode(response.body);
@@ -287,7 +287,7 @@ class _numberoneState extends State<numberone> {
                     phone: phonenumber,
                     status: status,
                     userid: user_id,
-                    otp: otp,
+                    otp: otp.toString(),
                   )));
       Utils.flushBarsuccessMessage(data["msg"], context, Colors.white);
     } else {
