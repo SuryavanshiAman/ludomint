@@ -226,9 +226,6 @@ class _otp_PageState extends State<otp_Page> {
     final response = await http.get(
       Uri.parse('${AppConstants.OTP_verify}mobile=$phonenumber&otp=$_textController'),);
     var data = jsonDecode(response.body);
-    print(data);
-    print("'${AppConstants.OTP_verify}mobile=$phonenumber&otp=$_textController'");
-    print('kkkkkkkkkkk');
     if(data["error"]=="200"){
       Navigator.push(context, MaterialPageRoute(builder: (context)=>Numberthree()));
       Utils.flushBarsuccessMessage(data["msg"], context, Colors.white);
@@ -244,7 +241,11 @@ class _otp_PageState extends State<otp_Page> {
 
 
     final response = await http.get(
-      Uri.parse('${AppConstants.Send_otp}mobile=$phonenumber&digit=4&mode=test'),
+      phonenumber == "9999999999"
+          ? Uri.parse(
+          '${AppConstants.Send_otp}mobile=$phonenumber&digit=4&mode=test')
+          : Uri.parse(
+          '${AppConstants.Send_otp}mobile=$phonenumber&digit=4&mode=live'),
     );
 
 

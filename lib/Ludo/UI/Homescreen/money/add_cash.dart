@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upi_india/upi_india.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../constant/api constant.dart';
 import '../../constant/utilll.dart';
@@ -124,7 +125,7 @@ class _addcashState extends State<addcash> {
     switch (status) {
       case UpiPaymentStatus.SUCCESS:
 
-        addmony();
+        // addmony();
         print('Transaction Successful');
         break;
       case UpiPaymentStatus.SUBMITTED:
@@ -161,62 +162,71 @@ class _addcashState extends State<addcash> {
     final height = MediaQuery.of(context).size.height;
     return Column(
       children: <Widget>[
-        Container(
-          child: const Center(child: Text("PAY USING",
-            style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.w900
+        InkWell(
+          onTap: (){
+            addmony();
+          },
+          child: Container(
+            alignment: Alignment.center,
+            width: width*0.7,
+            height: height*0.05,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20)
             ),
-          )),
-        ),
-        const SizedBox(height: 20,),
-        Expanded(
-          child: displayUpiApps(),
-        ),
-        Expanded(
-          child: FutureBuilder(
-            future: _transaction,
-            builder: (BuildContext context, AsyncSnapshot<UpiResponse> snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      _upiErrorHandler(snapshot.error.runtimeType),
-                      style: header,
-                    ), // Print's text message on screen
-                  );
-                }
-                // If we have data then definitely we will have UpiResponse.
-                // It cannot be null
-                UpiResponse _upiResponse = snapshot.data!;
-                // Data in UpiResponse can be null. Check before printing
-                String txnId = _upiResponse.transactionId ?? 'N/A';
-                String resCode = _upiResponse.responseCode ?? 'N/A';
-                String txnRef = _upiResponse.transactionRefId ?? 'N/A';
-                String status = _upiResponse.status ?? 'N/A';
-                String approvalRef = _upiResponse.approvalRefNo ?? 'N/A';
-                _checkTxnStatus(status);
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      displayTransactionData('Transaction Id', txnId,),
-                      displayTransactionData('Response Code', resCode),
-                      displayTransactionData('Reference Id', txnRef),
-                      displayTransactionData('Status', status.toUpperCase()),
-                      displayTransactionData('Approval No', approvalRef),
-                    ],
-                  ),
-                );
-              } else
-                return const Center(
-                  child: Text(''),
-                );
-            },
+            child: Text("Deposit", style: TextStyle(
+                fontSize: 20,
+                color: Colors.black,
+                fontWeight: FontWeight.w900
+            ),),
           ),
         )
+        // Expanded(
+        //   child: displayUpiApps(),
+        // ),
+        // Expanded(
+        //   child: FutureBuilder(
+        //     future: _transaction,
+        //     builder: (BuildContext context, AsyncSnapshot<UpiResponse> snapshot) {
+        //       if (snapshot.connectionState == ConnectionState.done) {
+        //         if (snapshot.hasError) {
+        //           return Center(
+        //             child: Text(
+        //               _upiErrorHandler(snapshot.error.runtimeType),
+        //               style: header,
+        //             ), // Print's text message on screen
+        //           );
+        //         }
+        //         // If we have data then definitely we will have UpiResponse.
+        //         // It cannot be null
+        //         UpiResponse _upiResponse = snapshot.data!;
+        //         // Data in UpiResponse can be null. Check before printing
+        //         String txnId = _upiResponse.transactionId ?? 'N/A';
+        //         String resCode = _upiResponse.responseCode ?? 'N/A';
+        //         String txnRef = _upiResponse.transactionRefId ?? 'N/A';
+        //         String status = _upiResponse.status ?? 'N/A';
+        //         String approvalRef = _upiResponse.approvalRefNo ?? 'N/A';
+        //         _checkTxnStatus(status);
+        //         return Padding(
+        //           padding: const EdgeInsets.all(8.0),
+        //           child: Column(
+        //             mainAxisAlignment: MainAxisAlignment.center,
+        //             children: <Widget>[
+        //               displayTransactionData('Transaction Id', txnId,),
+        //               displayTransactionData('Response Code', resCode),
+        //               displayTransactionData('Reference Id', txnRef),
+        //               displayTransactionData('Status', status.toUpperCase()),
+        //               displayTransactionData('Approval No', approvalRef),
+        //             ],
+        //           ),
+        //         );
+        //       } else
+        //         return const Center(
+        //           child: Text(''),
+        //         );
+        //     },
+        //   ),
+        // )
       ],
     );
   }
@@ -224,26 +234,39 @@ class _addcashState extends State<addcash> {
   addmony()async {
     final prefs = await SharedPreferences.getInstance();
     final userid = prefs.getString("userId");
-    final response =  await http.post(Uri.parse(AppConstants.Addmoney),
+    final response =  await http.post(Uri.parse("https://root.ludomint.in/index.php/api/Mobile_app/payin"),
       headers:<String ,String>{
         "Content-Type":"application/json; charset=UTF-8",
       },
       body: jsonEncode(<String ,String>{
-        "userid": '$userid',
+        "userid": userid.toString(),
         "amount": widget.amount,
       }),
     );
     var data = jsonDecode(response.body);
+    print(userid);
+    print(data['intent_link']);
     print(data);
-    print('qqqqqqqqqqqqqqqqqq');
-    if(data["status"]=='200'){
+    // launchURL(data["intent_link"]);
+    if(data["status"]==200){
+
+      launchUPI(data['intent_link']);
       Utils.flushBarsuccessMessage( data["msg"],context,Colors.white);
     }
     else{
-
       Utils.flushBarErrorMessage( data["msg"],context,Colors.white);
     }
 
+  }
+  Future<void> launchUPI(String upiLink) async {
+    Uri uri = Uri.parse(upiLink);
+    debugPrint("Trying to launch UPI: $uri");
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint("Could not launch UPI link: $uri");
+    }
   }
 
 }

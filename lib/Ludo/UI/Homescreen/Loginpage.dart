@@ -196,7 +196,6 @@ class _numberoneState extends State<numberone> {
                       maxLength: 10,
                     ),
                   ),
-
                 ],
               ),
               SizedBox(height: heights / 20),
@@ -270,8 +269,11 @@ class _numberoneState extends State<numberone> {
 
   otpurl(String phonenumber, status, user_id) async {
     final response = await http.get(
-      Uri.parse(
-          '${AppConstants.Send_otp}mobile=$phonenumber&digit=4&mode=live'),
+      phonenumber == "9999999999"
+          ? Uri.parse(
+              '${AppConstants.Send_otp}mobile=$phonenumber&digit=4&mode=test')
+          : Uri.parse(
+              '${AppConstants.Send_otp}mobile=$phonenumber&digit=4&mode=live'),
     );
 
     var data = jsonDecode(response.body);

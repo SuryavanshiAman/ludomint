@@ -5,7 +5,6 @@ class AppConstants {
   static const String fontFamily = 'Roboto';
   static const String fontAcme = 'Acme';
   static const String fontRighteous = 'Righteous';
-
   static const String MainBaseurl = 'https://root.ludomint.in/';
   static const String Baseurl = '${MainBaseurl}index.php/api/Mobile_app/';
   static const String imageurl = '${MainBaseurl}uploads/';

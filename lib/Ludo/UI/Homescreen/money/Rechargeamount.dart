@@ -363,8 +363,11 @@ class _rechargeState extends State<recharge> {
                           _isButtonEnabled ?
                           Container(
                               height: height * 0.9,
+
                               child: addcash(amount: amount.text)) :
-                          Container()
+                          Container(
+
+                          )
                         ],
                       );
                     }
