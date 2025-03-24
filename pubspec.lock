@@ -398,6 +398,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.1"
+  flutter_cashfree_pg_sdk:
+    dependency: "direct main"
+    description:
+      name: flutter_cashfree_pg_sdk
+      sha256: e41d4f48a0dbcd0f185e94069d7d47be344e6f0ea96a80414ba111131309b97a
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.4+42"
   flutter_inset_box_shadow:
     dependency: "direct main"
     description:

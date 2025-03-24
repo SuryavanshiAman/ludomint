@@ -62,6 +62,8 @@ dependencies:
   firebase_database:
   cloud_firestore:
   firebase_core:
+#  cashfree_pg:
+  flutter_cashfree_pg_sdk: ^2.2.4+42
 
 
 dev_dependencies:

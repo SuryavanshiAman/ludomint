@@ -6,6 +6,7 @@ import 'package:motion/motion.dart';
 import 'package:provider/provider.dart';
 
 import 'Ludo/UI/Homescreen/Splash.dart';
+import 'cashfree_provider.dart';
 import 'ludo_provider.dart';
 import 'view_model/create_joine_view_model.dart';
 import 'view_model/firebase_view_model.dart';
@@ -46,6 +47,7 @@ class _RootState extends State<Root> {
         ChangeNotifierProvider(create: (_) => FirebaseViewModel()),
         ChangeNotifierProvider(create: (_) => CreateJoinViewModel()),
         ChangeNotifierProvider(create: (_) => JoinViewModel()),
+        ChangeNotifierProvider(create: (_) => PaymentService()),
 
       ],
       child: const MaterialApp(

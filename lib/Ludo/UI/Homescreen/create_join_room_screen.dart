@@ -30,8 +30,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<CreateJoinViewModel>(context, listen: false)
-          .clearData(context);
+      Provider.of<CreateJoinViewModel>(context, listen: false).clearData(context);
     });
   }
 

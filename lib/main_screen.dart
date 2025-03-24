@@ -62,7 +62,8 @@ class _MainScreenState extends State<MainScreen> {
   void dispose() {
     super.dispose();
   }
-  String userid='';
+
+  String userid = '';
   getUserId() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -94,6 +95,7 @@ class _MainScreenState extends State<MainScreen> {
     return path;
   }
 
+  String roomCode = "";
   bool win = false;
   @override
   Widget build(BuildContext context) {
@@ -145,13 +147,16 @@ class _MainScreenState extends State<MainScreen> {
                           children: [
                             JellyButtonn(
                                 onTap: () {
-
+                                  winningMatch(userid, 0, roomCode);
                                   ludoProvider.removePlayerData(context);
-
+                                  FirebaseFirestore.instance.collection('ludo').doc(roomCode).update({
+                                    'loserId': userid,
+                                  });
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => const Numberthree()));
+                                          builder: (context) =>
+                                              const Numberthree()));
                                   Audio.audioPlayer.stop();
                                   Audio.audioPlayers.stop();
                                 },
@@ -417,7 +422,6 @@ class _MainScreenState extends State<MainScreen> {
                                                   children: [
                                                     JellyButtonn(
                                                         onTap: () {
-
                                                           ludoProvider
                                                               .removePlayerData(
                                                                   context);
@@ -468,8 +472,9 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildDynamicContent(BuildContext context, Map<String, dynamic> data) {
+    roomCode = data['roomCode'].toString();
     CollectionReference ludoCollection =
-    FirebaseFirestore.instance.collection('ludo');
+        FirebaseFirestore.instance.collection('ludo');
     Map<String, dynamic> player1Data =
         (data['1'] != null && data['1'].isNotEmpty)
             ? json.decode(data['1'])
@@ -487,6 +492,12 @@ class _MainScreenState extends State<MainScreen> {
             ? json.decode(data['4'])
             : {};
 
+    dynamic myPLayerData;
+    if (player1Data['id'] == userid) {
+      myPLayerData = 1;
+    } else if (player3Data['id'] == userid) {
+      myPLayerData = 3;
+    }
     final List<Map<String, dynamic>> playerData = [
       player1Data,
       player2Data,
@@ -511,16 +522,18 @@ class _MainScreenState extends State<MainScreen> {
           userDiseDesing(player1Data),
           oppentsTurn(player3Data),
           Consumer<LudoProvider>(builder: (context, value, child) {
-            if (
-                data['3'].isEmpty ||
-                data['1'].isEmpty) {
-              if (win==false)
-                winningMatch(userid,
-                    data['entryAmount'].toString(), data['roomCode'].toString());
-            win=true;
-            Future.delayed(Duration(seconds: 3),(){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Numberthree()));
-            });
+            if (data['3'].isEmpty || data['1'].isEmpty) {
+              if(data['loserId'] != "" && data['loserId'] != userid){
+                if (win == false) {
+                  winningMatch(userid, data['entryAmount'].toString(),
+                      data['roomCode'].toString());
+                }
+                win = true;
+              }
+              Future.delayed(Duration(seconds: 3), () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => Numberthree()));
+              });
 
               return Container(
                 color: Colors.black.withOpacity(0.8),
@@ -540,8 +553,8 @@ class _MainScreenState extends State<MainScreen> {
                           //     ? "The Winners is: ${value.winners.map((e) => e.name.toUpperCase()).join(", ")}"
                           //     :
                           data['3'].isEmpty
-                                  ? "The Winners is:${player1Data['name']} "
-                                  : "The Winners is:${player3Data['name']} ",
+                              ? "The Winners is:${player1Data['name']} "
+                              : "The Winners is:${player3Data['name']} ",
                           style: const TextStyle(
                               color: Colors.white, fontSize: 30),
                           textAlign: TextAlign.center),
@@ -554,16 +567,18 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ),
               );
-            }
-            else if(data["winnerId"] != null){
-              if (win==false)
-              winningMatch(data["winnerId"],
-                  data['entryAmount'].toString(), data['roomCode'].toString());
-              win=true;
-              Future.delayed(Duration(seconds: 3),(){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Numberthree()));
+            } else if (data["winnerId"] != null) {
+              print("💕💕💕");
+              if (win == false) {
+                winningMatch(data["winnerId"], data['entryAmount'].toString(),
+                    data['roomCode'].toString());
+              }
+              win = true;
+              Future.delayed(Duration(seconds: 3), () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => Numberthree()));
               });
-              if(data["winnerId"]==userid){
+              if (data["winnerId"] == userid) {
                 return Container(
                   color: Colors.black.withOpacity(0.8),
                   child: Center(
@@ -582,8 +597,8 @@ class _MainScreenState extends State<MainScreen> {
                             //     ? "The Winners is: ${value.winners.map((e) => e.name.toUpperCase()).join(", ")}"
                             //     : data['3'].isEmpty
                             //     ?
-                        "The Winners is:${name} ",
-                                // : "The Winners is:${player3Data['name']} ",
+                            "The Winners is:${name} ",
+                            // : "The Winners is:${player3Data['name']} ",
                             style: const TextStyle(
                                 color: Colors.white, fontSize: 30),
                             textAlign: TextAlign.center),
@@ -596,7 +611,12 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   ),
                 );
-              }else{
+              } else {
+                if (win == false) {
+                  winningMatch(
+                      data["winnerId"], 0, data['roomCode'].toString());
+                }
+                win = true;
                 return Container(
                   color: Colors.black.withOpacity(0.8),
                   child: Center(
@@ -623,8 +643,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 );
               }
-            }
-            else {
+            } else {
               print("else too executed");
               return const SizedBox.shrink();
             }
@@ -764,7 +783,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  winningMatch(dynamic id,dynamic amount, dynamic roomCode) async {
+  winningMatch(dynamic id, dynamic amount, dynamic roomCode) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString("userId");
 

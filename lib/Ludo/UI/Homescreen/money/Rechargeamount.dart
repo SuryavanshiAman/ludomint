@@ -131,22 +131,22 @@ class _rechargeState extends State<recharge> {
     }
   }
 
-  void _checkTxnStatus(String status) {
-    switch (status) {
-      case UpiPaymentStatus.SUCCESS:
-        addmony();
-        print('Transaction Successful');
-        break;
-      case UpiPaymentStatus.SUBMITTED:
-        print('Transaction Submitted');
-        break;
-      case UpiPaymentStatus.FAILURE:
-        print('Transaction Failed');
-        break;
-      default:
-        print('Received an Unknown transaction status');
-    }
-  }
+  // void _checkTxnStatus(String status) {
+  //   switch (status) {
+  //     case UpiPaymentStatus.SUCCESS:
+  //       addmony();
+  //       print('Transaction Successful');
+  //       break;
+  //     case UpiPaymentStatus.SUBMITTED:
+  //       print('Transaction Submitted');
+  //       break;
+  //     case UpiPaymentStatus.FAILURE:
+  //       print('Transaction Failed');
+  //       break;
+  //     default:
+  //       print('Received an Unknown transaction status');
+  //   }
+  // }
 
   Widget displayTransactionData(title, body) {
     return Padding(
@@ -386,6 +386,7 @@ class _rechargeState extends State<recharge> {
         final jsondata = json.decode(response.body)["data"] as List<dynamic>;
         if (kDebugMode) {
           print(jsondata);
+          print("Aman:$jsondata");
         }
         return jsondata.map((item) => coinshop.fromJson(item)).toList();
       }

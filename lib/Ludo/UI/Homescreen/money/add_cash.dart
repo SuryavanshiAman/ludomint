@@ -1,12 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_cashfree_pg_sdk/api/cfpayment/cfupi.dart';
+import 'package:flutter_cashfree_pg_sdk/api/cfpayment/cfupipayment.dart';
+import 'package:flutter_cashfree_pg_sdk/api/cfpaymentgateway/cfpaymentgatewayservice.dart';
+import 'package:flutter_cashfree_pg_sdk/utils/cfenums.dart';
+import 'package:ludomint/cashfree_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upi_india/upi_india.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../constant/api constant.dart';
+import 'package:flutter_cashfree_pg_sdk/api/cfsession/cfsession.dart';
+import 'package:flutter_cashfree_pg_sdk/utils/cfexceptions.dart';
 import '../../constant/utilll.dart';
+
 
 class addcash extends StatefulWidget {
   final amount;
@@ -160,11 +167,13 @@ class _addcashState extends State<addcash> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
+    final upi=Provider.of<PaymentService>(context);
     return Column(
       children: <Widget>[
-        InkWell(
+       isLoading==false? InkWell(
           onTap: (){
             addmony();
+            // Navigator.push(context, MaterialPageRoute(builder: (context)=>CashFreeGetwayScreen()));
           },
           child: Container(
             alignment: Alignment.center,
@@ -180,7 +189,28 @@ class _addcashState extends State<addcash> {
                 fontWeight: FontWeight.w900
             ),),
           ),
-        )
+        ):Center(child: CircularProgressIndicator(color: Colors.white,)),
+        // InkWell(
+        //   onTap: (){
+        //     upi.payUsingUpiApp();
+        //     // addmony();
+        //     // Navigator.push(context, MaterialPageRoute(builder: (context)=>CashFreeGetwayScreen()));
+        //   },
+        //   child: Container(
+        //     alignment: Alignment.center,
+        //     width: width*0.7,
+        //     height: height*0.05,
+        //     decoration: BoxDecoration(
+        //       color: Colors.white,
+        //       borderRadius: BorderRadius.circular(20)
+        //     ),
+        //     child: Text("upi", style: TextStyle(
+        //         fontSize: 20,
+        //         color: Colors.black,
+        //         fontWeight: FontWeight.w900
+        //     ),),
+        //   ),
+        // ),
         // Expanded(
         //   child: displayUpiApps(),
         // ),
@@ -230,11 +260,14 @@ class _addcashState extends State<addcash> {
       ],
     );
   }
-
+bool isLoading=false;
   addmony()async {
+    setState(() {
+      isLoading=true;});
     final prefs = await SharedPreferences.getInstance();
     final userid = prefs.getString("userId");
-    final response =  await http.post(Uri.parse("https://root.ludomint.in/index.php/api/Mobile_app/payin"),
+    // final response =  await http.post(Uri.parse("https://root.ludomint.in/index.php/api/Mobile_app/payin"),
+    final response =  await http.post(Uri.parse("https://root.ludomint.in/index.php/api/Mobile_app/createOrder"),
       headers:<String ,String>{
         "Content-Type":"application/json; charset=UTF-8",
       },
@@ -248,16 +281,77 @@ class _addcashState extends State<addcash> {
     print(data['intent_link']);
     print(data);
     // launchURL(data["intent_link"]);
-    if(data["status"]==200){
-
-      launchUPI(data['intent_link']);
-      Utils.flushBarsuccessMessage( data["msg"],context,Colors.white);
+    if(response.statusCode==200){
+      String orderId = data["order_id"];
+      String paymentSessionId = data["payment_session_id"];
+Provider.of<PaymentService>(context,listen: false).setPaymentSessionIdAndOrderId(orderId, paymentSessionId, context);
+Future.delayed(Duration(seconds: 3),(){
+  Provider.of<PaymentService>(context,listen: false).payUsingUpiApp();
+  setState(() {
+    isLoading=false;});
+});
+      // Call Cashfree Payment Gateway
+      // startCashfreePayment(orderId, paymentSessionId);
+      // Utils.flushBarsuccessMessage( data["message"],context,Colors.white);
     }
     else{
-      Utils.flushBarErrorMessage( data["msg"],context,Colors.white);
+      setState(() {
+        isLoading=false;
+    });
+      Utils.flushBarErrorMessage( data["message"],context,Colors.white);
     }
 
   }
+  var cfPaymentGatewayService = CFPaymentGatewayService();
+  CFEnvironment environment = CFEnvironment.SANDBOX;
+  // void startCashfreePayment(String orderId, String paymentSessionId) async {
+  //   try {
+  //     var session = CFSessionBuilder()
+  //         .setEnvironment(environment)
+  //         .setOrderId(orderId)
+  //         .setPaymentSessionId(paymentSessionId)
+  //         .build();
+  //     // var paymentComponent = CFDropCheckoutPaymentBuilder()
+  //     //     .setSession(session)
+  //     //     .setPaymentComponent(CFPaymentComponent as CFPaymentComponent)
+  //     //     .build();
+  //     var upi = CFUPIBuilder().setChannel(CFUPIChannel.COLLECT).setUPIID("suhasg6@ybl").build();
+  //     var upiPayment = CFUPIPaymentBuilder().setSession(session).setUPI(upi).build();
+  //     cfPaymentGatewayService.doPayment(upiPayment);
+  //   } on CFException catch (e) {
+  //     print("Error: ${e.message}");
+  //   }
+  // }
+  // void startCashfreePayment(String orderId, String paymentSessionId) async {
+  //   try {
+  //     String environment = "TEST"; // Use "PROD" for live payments
+  //
+  //     // Create a session map
+  //     Map<String, dynamic> session = {
+  //       "orderId": orderId,
+  //       "paymentSessionId": paymentSessionId,
+  //       "environment": environment
+  //     };
+  //
+  //     // Set up event listeners before calling `doPayment`
+  //     FlutterCashfreePgSdk.setEventListener((Map<dynamic, dynamic> response) {
+  //       print("Cashfree Payment Response: $response");
+  //
+  //       if (response["status"] == "SUCCESS") {
+  //         print("Payment Successful: ${response["orderId"]}");
+  //         // Handle payment success (e.g., update database, show success message)
+  //       } else {
+  //         print("Payment Failed: ${response["reason"]}");
+  //         // Handle payment failure (e.g., show error message)
+  //       }
+  //     });
+  //
+  //     // Start the Cashfree Payment after setting up the listener
+  //     await FlutterCashfreePgSdk.doPayment(session);
+  //   } catch (e) {
+  //     print("Error: $e");
+  //   }
+  // }
   Future<void> launchUPI(String upiLink) async {
     Uri uri = Uri.parse(upiLink);
     debugPrint("Trying to launch UPI: $uri");
