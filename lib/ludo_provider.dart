@@ -505,7 +505,7 @@ class LudoProvider with ChangeNotifier {
     notifyListeners();
   }
 void setEntryAmount(int value){
-  _entryAmount=value;
+  _entryAmount = value;
   notifyListeners();
 }
   // Function to pick an image and encode it to base64

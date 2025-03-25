@@ -269,14 +269,15 @@ bool circular=false;
       final data = jsonDecode(response.body);
       print(data);
       print("👍👍👍👍update");
+      print("👍👍👍👍aman");
       if(data["error"]=="200"){
         ludo.joinRoom(context, joinRoomCon.text.trim()).then((value) {
           cJVMCon.navigateToWaitingScreen(
               context, joinRoomCon.text.trim());
         });
-        setState(() {
+        // setState(() {
           getprofile();
-        });
+        // });
       }
       else {
         Utils.flushBarErrorMessage(data["msg"], context, Colors.white);

@@ -40,15 +40,13 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    Provider.of<LudoProvider>(context, listen: false)
-        .listenToGameUpdates(context);
+    Provider.of<LudoProvider>(context, listen: false).listenToGameUpdates(context);
     Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         showGif = false;
       });
     });
-    _confettiController =
-        ConfettiController(duration: const Duration(seconds: 10));
+    _confettiController = ConfettiController(duration: const Duration(seconds: 10));
     // TODO: implement initState
     getUserId();
     super.initState();
@@ -61,6 +59,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void dispose() {
     super.dispose();
+    ludoProvider.dispose();
   }
 
   String userid = '';
@@ -152,11 +151,11 @@ class _MainScreenState extends State<MainScreen> {
                                   FirebaseFirestore.instance.collection('ludo').doc(roomCode).update({
                                     'loserId': userid,
                                   });
-                                  Navigator.pushReplacement(
+                                  Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const Numberthree()));
+                                              const Numberthree()), (route) => false);
                                   Audio.audioPlayer.stop();
                                   Audio.audioPlayers.stop();
                                 },
@@ -530,10 +529,23 @@ class _MainScreenState extends State<MainScreen> {
                 }
                 win = true;
               }
-              Future.delayed(Duration(seconds: 3), () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => Numberthree()));
-              });
+              if (mounted) {
+                Future.delayed(Duration(seconds: 3), () {
+                  if (mounted) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Numberthree()),
+                    );
+                  }
+                });
+              }
+              // Future.delayed(Duration(seconds: 3), () {
+              //   Navigator.pushReplacement(
+              //       context,
+              //       MaterialPageRoute(
+              //           builder: (context) =>
+              //           const Numberthree()));
+              // });
 
               return Container(
                 color: Colors.black.withOpacity(0.8),
@@ -575,8 +587,11 @@ class _MainScreenState extends State<MainScreen> {
               }
               win = true;
               Future.delayed(Duration(seconds: 3), () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => Numberthree()));
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                        const Numberthree()), (route) => false);
               });
               if (data["winnerId"] == userid) {
                 return Container(
@@ -804,14 +819,9 @@ class _MainScreenState extends State<MainScreen> {
         }));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-
-      print(data);
-      print("👍👍👍👍update");
-
       if (data["error"] == "200") {
-        setState(() {
           getprofile();
-        });
+          print("winningMatchApi");
       } else {
         Utils.flushBarErrorMessage(data["msg"], context, Colors.white);
       }

@@ -54,15 +54,15 @@ class _NumberthreeState extends State<Numberthree>  with WidgetsBindingObserver 
 
  @override
   void initState() {
+
+    super.initState();
+    WidgetsBinding.instance.addObserver(this); // Add the observer
     Audio.bgmusic();
     Audio.sound();
     getprofile();
     getlinks();
     getrules();
-    super.initState();
-    WidgetsBinding.instance.addObserver(this); // Add the observer
-
-
+print("Tota");
   }
 
   @override
@@ -118,7 +118,7 @@ class _NumberthreeState extends State<Numberthree>  with WidgetsBindingObserver 
   void dispose() {
     Audio.audioPlayers.dispose();
     Audio.audioPlayer.dispose();
-    getprofile();
+    // getprofile();
     super.dispose();
   }
 
@@ -129,17 +129,15 @@ class _NumberthreeState extends State<Numberthree>  with WidgetsBindingObserver 
     List<Fourbox> boxdata = [
       Fourbox(AppAsset.imagesOne, "Play online", () {
         final ludoProvider = LudoProvider();
-        ludoProvider.dispose();
+        // ludoProvider.dispose();
         Audio.sound();
         showDialog(context: context, builder: (context)=>const Classic());
       }
       ),
       Fourbox(AppAsset.imagesTwo, "Tournament", () {
-        // showDialog(context: context, builder: (ctx) => const CreateJoinRoomScreen());
         showDialog(context: context, builder: (ctx) => const Classic());
       }),
       Fourbox(AppAsset.imagesThree, "Play with friends", () {
-        // Navigator.push(context, MaterialPageRoute(builder: (context)=>const Myprivate()));
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const Classic()));
         Audio.sound();
       }),
