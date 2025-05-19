@@ -25,7 +25,7 @@ class ImageToast {
               image: AssetImage(imagePath),
             ),
           ),
-          child: Text(text,style: TextStyle(fontWeight: FontWeight.w600,),),
+          child: Text(text,style: const TextStyle(fontWeight: FontWeight.w600,),),
         ),
       ),
       gravity: ToastGravity.CENTER,

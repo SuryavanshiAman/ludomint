@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:ludomint/Ludo/UI/constant/api%20constant.dart';
-import 'package:ludomint/helper/app_exception.dart';
+import 'package:ludo_score/Ludo/UI/constant/api%20constant.dart';
+import 'package:ludo_score/helper/app_exception.dart';
 import 'base_api_services.dart';
 
 

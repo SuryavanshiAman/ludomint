@@ -1,4 +1,4 @@
-import 'package:ludomint/Ludo/UI/constant/style.dart';
+import 'package:ludo_score/Ludo/UI/constant/style.dart';
 import 'package:flutter/material.dart';
 
 import '../../constant/images.dart';

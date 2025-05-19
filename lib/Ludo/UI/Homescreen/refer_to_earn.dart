@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_share/flutter_share.dart';
+import 'package:ludo_score/goggleAds/ads_helper_provider.dart';
+import 'package:ludo_score/view_model/profile_view_model.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../constant/Launcher.dart';
 import '../constant/clipboard.dart';
 import '../constant/images.dart';
 import '../constant/style.dart';
-import 'api/apiprofile.dart';
 import 'howItWorks.dart';
 import 'myReferral.dart';
 
-class Myshare extends StatefulWidget {
-  const Myshare({super.key});
+class ReferToEarn extends StatefulWidget {
+  const ReferToEarn({super.key});
 
   @override
-  State<Myshare> createState() => _MyshareState();
+  State<ReferToEarn> createState() => _ReferToEarnState();
 }
 
-class _MyshareState extends State<Myshare> {
+class _ReferToEarnState extends State<ReferToEarn> {
   @override
   Widget build(BuildContext context) {
     final heights = MediaQuery.of(context).size.height;
@@ -25,8 +27,8 @@ class _MyshareState extends State<Myshare> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.indigo[900],
-        title: Center(child: Text("Refer and Earn",style: RighteousMedium.copyWith(fontSize: heights * 0.030, color: Colors.white),
-        )
+        centerTitle: true,
+        title: Text("Refer and Earn",style: RighteousMedium.copyWith(fontSize: heights * 0.030, color: Colors.white),
         ),
       ),
       body: Container(
@@ -47,7 +49,7 @@ class _MyshareState extends State<Myshare> {
                 children: [
                   InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>Howitworks()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const Howitworks()));
                     },
                     child: Container(
                       height: heights/10,
@@ -58,7 +60,7 @@ class _MyshareState extends State<Myshare> {
                   ),
                   InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> const Myreferral()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> const ReferalHistory()));
                     },
                     child: Container(
                       height: heights/10,
@@ -78,7 +80,7 @@ class _MyshareState extends State<Myshare> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text("Share,Get Paid. Repeat\nrefer and earn upto 100",style: RighteousMedium.copyWith(fontSize: heights * 0.020, color: Colors.white)),
+                      Text("Share, Repeat refer and\n earn UpTo 100 Coins ",style: RighteousMedium.copyWith(fontSize: heights * 0.020, color: Colors.white)),
                       Container(
                         height: heights/6,
                         width: widths/3,
@@ -104,11 +106,17 @@ class _MyshareState extends State<Myshare> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text("Share your code",style: RighteousMedium.copyWith(fontSize: heights * 0.020, color: Colors.white)),
-                            InkWell(
-                                onTap: (){
-                                copyToClipboard(referalcode=='null'?"2526526":referalcode.toString(),context);
-                                },
-                                child: Image.asset(AppAsset.imagesClipboard,height: heights/20))
+
+                            Consumer<ProfileViewModel>(
+                                builder: (context,profileVM,child) {
+                                  final profileData= profileVM.profileModelData;
+                                 return    InkWell(
+                                      onTap: (){
+                                        copyToClipboard(profileData?.data?.wallet==null?"":"${profileData?.data?.wallet}",context);
+                                      },
+                                      child: Image.asset(AppAsset.imagesClipboard,height: heights/20));
+                                }
+                            ),
                           ],
                         ),
                       ),
@@ -153,7 +161,7 @@ class _MyshareState extends State<Myshare> {
                         )
                       ),
                       SizedBox(width: widths/20,),
-                      Text("Earn on deposit \nGet Rs100 on friend deposit.", style: RighteousMedium.copyWith(fontSize: heights * 0.020, color: Colors.white,fontWeight: FontWeight.bold) )
+                      Text("Earn on deposit \nGet 100 Coins on friend deposit.", style: RighteousMedium.copyWith(fontSize: heights * 0.020, color: Colors.white,fontWeight: FontWeight.bold) )
                     ],
                   ),
 
@@ -171,7 +179,7 @@ class _MyshareState extends State<Myshare> {
                           )
                         ),
                         SizedBox(width: widths/20,),
-                        Text("Earn on Signup\nGet Rs10 bonus money when your \nfriend signs up.", style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.white,fontWeight: FontWeight.bold) )
+                        Text("Earn on Signup\nGet 10 Coins when your \nfriend signs up.", style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.white,fontWeight: FontWeight.bold) )
                       ],
                     ),
                   )
@@ -184,15 +192,64 @@ class _MyshareState extends State<Myshare> {
 
     );
   }
+  // Future<void> share() async {
+  //   await FlutterShare.share(
+  //       title: 'Referral Code :',
+  //       text: 'Join Now & Get Exiting Prizes. here is my Referral Code : ' ,
+  //       linkUrl: "",
+  //       chooserTitle: 'Referrel Code : '
+  //   );
+  // }
+  // String referalCode = 'initialData';
   Future<void> share() async {
-    await FlutterShare.share(
-        title: 'Referral Code :',
-        text: 'Join Now & Get Exiting Prizes. here is my Referral Code : ' ,
-        linkUrl: "",
-        chooserTitle: 'Referrel Code : '
+    String referalCode = 'initialData';
+    await Share.share(
+      'Referral Code:\nJoin Now & Get Exciting Prizes.\nHere is my Referral Code: $referalCode',
+      subject: 'Referral Code',
     );
   }
-  String referalCode = 'initialData';
 }
+
+// class RewardsAdds extends StatefulWidget {
+//   const RewardsAdds({super.key});
+//
+//   @override
+//   State<RewardsAdds> createState() => _RewardsAddsState();
+// }
+//
+// class _RewardsAddsState extends State<RewardsAdds> {
+//   @override
+//   void initState() {
+//     super.initState();
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       final adsHelper = Provider.of<AdsHelper>(context, listen: false);
+//       adsHelper.loadRewardedAd();
+//     });
+//   }
+//
+//   @override
+//   void didChangeDependencies() {
+//     super.didChangeDependencies();
+//     final adsHelper = Provider.of<AdsHelper>(context);
+//     if (adsHelper.isRewardedAdLoaded) {
+//       Future.microtask(() => adsHelper.showRewardedAd(_onRewardEarned));
+//     }
+//   }
+//
+//   void _onRewardEarned() {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       const SnackBar(content: Text("You've earned a reward!")),
+//     );
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Scaffold(
+//       body: Center(child: Text("Watch the ad to earn rewards")),
+//     );
+//   }
+// }
+
+
 
 

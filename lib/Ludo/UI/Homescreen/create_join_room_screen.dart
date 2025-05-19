@@ -2,17 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_share/flutter_share.dart';
-import 'package:ludomint/Ludo/UI/Homescreen/api/apiprofile.dart';
-import 'package:ludomint/Ludo/UI/constant/api%20constant.dart';
-import 'package:ludomint/Ludo/UI/constant/clipboard.dart';
-import 'package:ludomint/Ludo/UI/constant/images.dart';
-import 'package:ludomint/Ludo/UI/constant/utilll.dart';
-import 'package:ludomint/audio.dart';
-import 'package:ludomint/ludo_provider.dart';
-import 'package:ludomint/main.dart';
-import 'package:ludomint/view_model/create_joine_view_model.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/timer_page.dart';
+import 'package:ludo_score/Ludo/UI/constant/clipboard.dart';
+import 'package:ludo_score/Ludo/UI/constant/images.dart';
+import 'package:ludo_score/Ludo/UI/constant/utilll.dart';
+import 'package:ludo_score/audio.dart';
+import 'package:ludo_score/ludo_provider.dart';
+import 'package:ludo_score/main.dart';
+import 'package:ludo_score/view_model/create_joine_view_model.dart';
+import 'package:ludo_score/view_model/profile_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'jjellybutton.dart';
@@ -30,7 +30,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<CreateJoinViewModel>(context, listen: false).clearData(context);
+      Provider.of<LudoProvider>(context, listen: false).clearData(context);
     });
   }
 
@@ -38,7 +38,6 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen> {
   Widget build(BuildContext context) {
     final heights = MediaQuery.of(context).size.height;
     final widths = MediaQuery.of(context).size.width;
-    final cJVMCon = Provider.of<CreateJoinViewModel>(context);
     final ludo = Provider.of<LudoProvider>(context);
     return Dialog(
       backgroundColor: Colors.black,
@@ -80,7 +79,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen> {
                 SizedBox(
                   height: heights / 24,
                 ),
-                if (cJVMCon.generatedRoomCode.isEmpty)
+                if (ludo.generatedRoomCode.isEmpty)
                   widget.status == "2" ? joinWithRoomCode() : Container(),
                 const SizedBox(
                   height: 10,
@@ -217,9 +216,9 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen> {
   }
 bool circular=false;
   Widget generateRoomAndStartGame() {
-    final cJVMCon = Provider.of<CreateJoinViewModel>(
-      context,
-    );
+    // final cJVMCon = Provider.of<CreateJoinViewModel>(
+    //   context,
+    // );
     return Column(
       children: [
         circular==false? JellyButton(
@@ -229,9 +228,12 @@ bool circular=false;
                 circular=true;
               });
               Audio.sound();
-              cJVMCon.startGame(context);
+                // Utils.flushBarsuccessMessage( "Game started with room code: $_generatedRoomCode", context, Colors.white);
+                // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const TimerScreen()));
+                // });
             },
-            title: "Start game"):CircularProgressIndicator(),
+            title: "Start game"):const CircularProgressIndicator(),
         shareRoomCode()
       ],
     );
@@ -239,12 +241,16 @@ bool circular=false;
 
   Future<void> share() async {
     final roomCode = Provider.of<LudoProvider>(context, listen: false);
-    await FlutterShare.share(
-        title: 'Play with friends',
-        text: '*${"LudoMint"}* \n  Create room and play ludo with your friends. Entry amount is ₹${roomCode.entryAmount}',
-        linkUrl: 'Room Code: ${roomCode.roomCode}',
-        chooserTitle: 'Room Code: ${roomCode.roomCode}');
+    await Share.share(
+        '*LudoMint*\nCreate a room and play Ludo with your friends.\nEntry amount: ₹${roomCode.entryAmount}\nRoom Code: ${roomCode.roomCode}',
+        subject: 'Play with Friends');
+        // title: 'Play with friends',
+        // text: '*${"LudoMint"}* \n  Create room and play ludo with your friends. Entry amount is ₹${roomCode.entryAmount}',
+        // linkUrl: 'Room Code: ${roomCode.roomCode}',
+        // chooserTitle: 'Room Code: ${roomCode.roomCode}');
   }
+
+
   joinApi(dynamic roomCode) async {
     print("🤡🤡🤡🤡");
     final cJVMCon = Provider.of<CreateJoinViewModel>(context,listen: false);
@@ -269,15 +275,14 @@ bool circular=false;
       final data = jsonDecode(response.body);
       print(data);
       print("👍👍👍👍update");
-      print("👍👍👍👍aman");
       if(data["error"]=="200"){
         ludo.joinRoom(context, joinRoomCon.text.trim()).then((value) {
-          cJVMCon.navigateToWaitingScreen(
-              context, joinRoomCon.text.trim());
+          // cJVMCon.navigateToWaitingScreen(
+          //     context, joinRoomCon.text.trim());
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const TimerScreen()));
         });
-        // setState(() {
-          getprofile();
-        // });
+        final profileVM = Provider.of<ProfileViewModel>(context,listen: false);
+        profileVM.profileApi();
       }
       else {
         Utils.flushBarErrorMessage(data["msg"], context, Colors.white);

@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_share/flutter_share.dart';
-
+import 'package:ludo_score/view_model/profile_view_model.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../audio.dart';
 import '../constant/clipboard.dart';
 import '../constant/images.dart';
 import '../constant/style.dart';
-import 'api/apiprofile.dart';
 import 'myreferralREFER.dart';
 
 class Myrefer extends StatefulWidget {
@@ -17,18 +17,14 @@ class Myrefer extends StatefulWidget {
 }
 
 class _MyreferState extends State<Myrefer> {
-  @override
-  void initState() {
-    getprofile();
-    // TODO: implement initState
-    super.initState();
-  }
 
 
   @override
   Widget build(BuildContext context) {
     final heights = MediaQuery.of(context).size.height;
     final widths = MediaQuery.of(context).size.width;
+    final profileVM =    Provider.of<ProfileViewModel>(context);
+    final profileData= profileVM.profileModelData;
     return SafeArea(
         child:
 
@@ -78,17 +74,17 @@ class _MyreferState extends State<Myrefer> {
                           color: Colors.indigo.shade900,
                         child: Row(
                           children: [
-                            Container(
+                            SizedBox(
                               height: heights / 30,
                               width: widths / 3,
-                              child: Center(child: Text(referalcode=='null'?"2526526":referalcode.toString(), style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white))),
+                              child: Center(child: Text(profileData?.data?.refralCode == null?"2526526":"${profileData?.data?.refralCode.toString()}", style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white))),
                             ),
-                            Container(
+                            SizedBox(
                               height: heights / 30,
                               width: widths / 15,
                               child: InkWell(
                                 onTap: () {
-                                  copyToClipboard(referalcode=='null'?"2526526":referalcode.toString(), context);
+                                  copyToClipboard(profileData?.data?.refralCode == null?"2526526":"${profileData?.data?.refralCode.toString()}", context);
                                 },
                                 child: const Icon(
                                   Icons.content_copy,
@@ -152,15 +148,21 @@ class _MyreferState extends State<Myrefer> {
         );
 
   }
-  String referalCode = 'initialData';
+  // String referalCode = 'initialData';
+  // Future<void> share() async {
+  //   await FlutterShare.share(
+  //       title: 'Referral Code :',
+  //       text: 'Join Now & Get Exiting Prizes. here is my Referral Code : ' ,
+  //       linkUrl: "",
+  //       chooserTitle: 'Referrel Code : '
+  //   );
+  // }
   Future<void> share() async {
-    await FlutterShare.share(
-        title: 'Referral Code :',
-        text: 'Join Now & Get Exiting Prizes. here is my Referral Code : ' ,
-        linkUrl: "",
-        chooserTitle: 'Referrel Code : '
+    String referalCode = 'initialData';
+    await Share.share(
+      'Referral Code:\nJoin Now & Get Exciting Prizes.\nHere is my Referral Code: $referalCode',
+      subject: 'Referral Code',
     );
   }
-
 }
 

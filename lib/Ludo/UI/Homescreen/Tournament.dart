@@ -1,247 +1,225 @@
 import 'package:flutter/material.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/Tournament/Leaderboard.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/Tournament/details_contest_screen.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/Tournament/my_network.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/Tournament/no_player_contest_join.dart';
+import 'package:ludo_score/ludo_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../../../audio.dart';
-import '../constant/images.dart';
-import '../constant/style.dart';
 
-
-
-class Mytour extends StatefulWidget {
-  const Mytour({super.key});
+class TournamentScreen extends StatefulWidget {
+  const TournamentScreen({super.key});
 
   @override
-  State<Mytour> createState() => _MytourState();
+  State<TournamentScreen> createState() => _TournamentScreenState();
 }
 
-class _MytourState extends State<Mytour>  {
-
-
+class _TournamentScreenState extends State<TournamentScreen> {
   @override
   Widget build(BuildContext context) {
-
     final heights = MediaQuery.of(context).size.height;
     final widths = MediaQuery.of(context).size.width;
-    return Dialog(
-      backgroundColor: Colors.black,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(39)),
-      child: Container(
-          height: heights*0.6,
-          width: widths*0.8,
-            decoration: BoxDecoration(border: Border.all(color: Colors.yellow.shade800, width: 3),borderRadius: BorderRadius.circular(40)),
-            child:Column(
-                children: [
-                  Align(
-                      alignment: Alignment.topRight,
-                      child: InkWell(
-                        child: Image.asset(
-                            AppAsset.imagesCross, height: heights/20),
-                        onTap: () {
-                          Audio.sound();
-                          Navigator.pop(context);
-                        },
-                      )
-                  ),
-                  Text("COMMING SOON", style: RighteousMedium.copyWith(fontSize: heights * 0.028, color: Colors.white)),
-                  // GFTabBar(
-                  //   tabBarColor: Colors.indigo.shade900,
-                  //   tabBarHeight: heights/18,
-                  //   width: widths/1.3,
-                  //   unselectedLabelColor: Colors.teal,
-                  //   length: 3,
-                  //   controller: tabController,
-                  //   tabs: [
-                  //     Tab(
-                  //       child: Text("Friends list",style: RighteousMedium.copyWith(fontSize: heights * 0.015, color: Colors.white,),),
-                  //     ),
-                  //     Tab(
-                  //       child: Text("Accepted",style: RighteousMedium.copyWith(fontSize: heights * 0.015, color: Colors.white,),),
-                  //     ),
-                  //     Tab(
-                  //       child: Text("Add friends",style: RighteousMedium.copyWith(fontSize: heights * 0.015, color: Colors.white,),
-                  //       ),
-                  //     )],
-                  // ),
-                  // GFTabBarView(
-                  //   height: heights/2.3,
-                  //     controller: tabController,
-                  //     children: <Widget>[
-                  //       Padding(
-                  //         padding: EdgeInsets.symmetric(vertical: 20),
-                  //         child: ListView.builder(
-                  //           scrollDirection: Axis.vertical,
-                  //           shrinkWrap: true,
-                  //           itemCount: list.length,
-                  //           itemBuilder: (context, index) {
-                  //
-                  //             if (list[index].isRemoved) {
-                  //               return SizedBox.shrink();
-                  //             }
-                  //
-                  //             return Padding(
-                  //               padding:  EdgeInsets.only(left: 20,right: 20,top: 5),
-                  //               child: Container(
-                  //                 // padding:  EdgeInsets.all(10.0),
-                  //                 height: heights*0.06,
-                  //                 decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)),color: Colors.red[900]),
-                  //                 child: Row(
-                  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //                   children: [
-                  //                     Padding(
-                  //                       padding: EdgeInsets.symmetric(horizontal: heights*0.02),
-                  //                       child: Container(
-                  //                           height: heights*0.6,
-                  //                           width: widths*0.07,
-                  //                           decoration: BoxDecoration(image: DecorationImage(image: AssetImage(list[index].photo)))),
-                  //                     ),
-                  //                     RichText(text: TextSpan(text:list[index].name, style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.white)),),
-                  //                     IconButton(
-                  //                         onPressed: (){
-                  //                           setState(() {
-                  //                             list[index].isRemoved = true;
-                  //
-                  //
-                  //                           });
-                  //                         },
-                  //                         icon: Icon(Icons.notification_add,size: 15,color: Colors.white,)
-                  //                     ),
-                  //
-                  //                   ],
-                  //                 ),
-                  //               ),
-                  //             );
-                  //           },
-                  //         ),
-                  //
-                  //       ),
-                  //       Padding(
-                  //         padding: EdgeInsets.symmetric(vertical: 20),
-                  //         child: ListView.builder(
-                  //           scrollDirection: Axis.vertical,
-                  //           shrinkWrap: true,
-                  //           itemCount: listtwo.length,
-                  //           itemBuilder: (context, index) {
-                  //
-                  //             if (list[index].isRemoved) {
-                  //               return SizedBox.shrink();
-                  //             }
-                  //
-                  //             return Padding(
-                  //               padding:  EdgeInsets.only(left: 20,right: 20,top: 5),
-                  //               child: Container(
-                  //                 // padding:  EdgeInsets.all(10.0),
-                  //                 height: heights*0.06,
-                  //                 decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)),color: Colors.red[900]),
-                  //                 child: Row(
-                  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //                   children: [
-                  //                     Padding(
-                  //                       padding: EdgeInsets.symmetric(horizontal: heights*0.02),
-                  //                       child: Container(
-                  //                           height: heights*0.6,
-                  //                           width: widths*0.07,
-                  //                           decoration: BoxDecoration(image: DecorationImage(image: AssetImage(listtwo[index].photo)))),
-                  //                     ),
-                  //                     RichText(text: TextSpan(text:listtwo[index].name, style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.white)),),
-                  //                     IconButton(
-                  //                         onPressed: (){},
-                  //                         icon: Icon(Icons.check,size: 15,color: Colors.white,)
-                  //                     ),IconButton(
-                  //                         onPressed: (){
-                  //                           setState(() {
-                  //                             listtwo[index].isRemoved = true;
-                  //
-                  //                           });
-                  //                         },
-                  //                         icon: Icon(Icons.close,size: 15,color: Colors.white,)
-                  //                     ),
-                  //
-                  //                   ],
-                  //                 ),
-                  //               ),
-                  //             );
-                  //           },
-                  //         ),
-                  //
-                  //       ),
-                  //       ListView(
-                  //         scrollDirection: Axis.vertical,
-                  //         children: [
-                  //           Column(
-                  //             children: [
-                  //               SearchBar(
-                  //                 backgroundColor: MaterialStateProperty.all(Colors.red.shade400),
-                  //                 // shadowColor: MaterialStateProperty.all(Colors.pinkAccent),
-                  //                 // overlayColor: MaterialStateProperty.all(Colors.pinkAccent),
-                  //                 elevation: MaterialStateProperty.all(20.0),
-                  //                 constraints: BoxConstraints(maxWidth: widths/1.5,maxHeight: heights/18),
-                  //                 hintText: "Search username",
-                  //                 hintStyle: MaterialStateProperty.all(const TextStyle(color: Colors.white)),
-                  //                 textStyle: MaterialStateProperty.all(const TextStyle(color: Colors.white)),
-                  //                 shape: MaterialStateProperty.all(const ContinuousRectangleBorder(
-                  //                   borderRadius: BorderRadius.all(Radius.circular(10)),
-                  //                 )),
-                  //                 trailing: [
-                  //                   IconButton(
-                  //                     icon: const Icon(Icons.search,color: Colors.white,),
-                  //                     onPressed: () {
-                  //                     },
-                  //                   ),
-                  //
-                  //                 ],
-                  //               ),
-                  //               Padding(
-                  //                 padding: EdgeInsets.symmetric(vertical: 20),
-                  //                 child: ListView.builder(
-                  //                   scrollDirection: Axis.vertical,
-                  //                   shrinkWrap: true,
-                  //                   itemCount: listthree.length,
-                  //                   itemBuilder: (context, index) {
-                  //                     if (list[index].isRemoved) {
-                  //                       return SizedBox.shrink();
-                  //                     }
-                  //                     return Padding(
-                  //                       padding:  EdgeInsets.only(left: 20,right: 20,top: 5),
-                  //                       child: Container(
-                  //                         // padding:  EdgeInsets.all(10.0),
-                  //                         height: heights*0.06,
-                  //                         decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)),color: Colors.red[900]),
-                  //                         child: Row(
-                  //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //                           children: [
-                  //                             Padding(
-                  //                               padding: EdgeInsets.symmetric(horizontal: heights*0.02),
-                  //                               child: Container(
-                  //                                   height: heights*0.6,
-                  //                                   width: widths*0.07,
-                  //                                   decoration: BoxDecoration(image: DecorationImage(image: AssetImage(listthree[index].photo)))),
-                  //                             ),
-                  //                             RichText(text: TextSpan(text:listthree[index].name, style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.white)),),
-                  //                             Icon(Icons.add,size: 15,color: Colors.white,)
-                  //
-                  //
-                  //                           ],
-                  //                         ),
-                  //                       ),
-                  //                     );
-                  //                   },
-                  //                 ),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ],
-                  //       ),
-                  //
-                  //     ]
-                  // ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0B1736),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        leading: IconButton(icon: const Icon(Icons.arrow_back,color: Colors.white,), onPressed: () {
+          Audio.sound();
+          Navigator.pop(context);
+        },),
+        title:const Text(
+          "Tournament",
+          style: TextStyle(color: Colors.yellow,fontSize: 25,fontFamily: 'acme',decoration: TextDecoration.underline),
+        ) ,
+      ),
+      body: Container(
+          height: heights,
+          width: widths,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF0B1736),
+                Color(0xFF142D66),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),),
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
+            itemCount: 10,
+            itemBuilder: (context, index) {
+              return Container(
+                height: heights * 0.15,
+                margin: const EdgeInsets.all(12),
+                width: widths,
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage("assets/images/tournament.png"),
+                        fit: BoxFit.fill)),
+                child:  Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(right: 8.0,top: 3),
+                      child: Text(
+                        "1V1 BATTLE",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    SizedBox(height: heights*0.016,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            const Text(
+                              "Prize Pool",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            SizedBox(height: heights*0.01,),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 24,vertical: 6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xff112860),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Text("20 Coins",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: heights*0.03),
+                          height: heights*0.02,
+                          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 0),
+                          decoration: BoxDecoration(
+                            color: const Color(0xff112860),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text("00m 04s",style: TextStyle(color: Colors.red,fontWeight: FontWeight.w600,fontSize: 12),),
+                        ),
+                        Column(
+                          children: [
+                            const Text(
+                              "Entry",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            SizedBox(height: heights*0.01,),
+                            Consumer<LudoProvider>(
+                              builder: (context,ludoP,_) {
+                                return InkWell(
+                                  onTap: (){
+                                    ludoP.joinOrCreateContestRoom(context, "10");
+                                  },
+                                  child: Container(
+                                      height:  30,
+                                      // width: widths * 0.1,
+                                      padding: const EdgeInsets.symmetric(horizontal: 24,vertical: 6),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: Colors.green,
+                                        boxShadow: const [
+                                          BoxShadow(
+                                          offset: Offset(0, 4),
+                                          blurRadius: 10,
+                                          color: Colors.green,
+                                          // inset: true,
+                                        ),
+                                        ],
+                                      ),
+                                      child: const Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Free",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        ],
+                                      )),
+                                );
+                              }
+                            )
+
+                          ],
+                        ),
+                      ],
+                    ),
+                    Container(
+                      height:  heights*0.03,
+                      margin: EdgeInsets.only(top: heights*0.01),
+                      padding: EdgeInsets.only(left: widths*0.015),
+                      decoration:  const BoxDecoration(
+                          color: Color(0xff112860),
+                          borderRadius: BorderRadius.only(bottomRight: Radius.circular(15),bottomLeft: Radius.circular(15))
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.people_outline,color: Colors.white,size: 20,),
+                              SizedBox(width: widths*0.02,),
+                              GestureDetector(
+                                  onTap: (){
+                                    Audio.sound();
+                                    showDialog(context: context, builder: (context)=>const NoPlayerContestJoin());
+
+                                  },
+                                  child: const Text("23 Joined ",style: TextStyle(color: Colors.white,fontSize: 12,decoration: TextDecoration.underline),)),
+                            ],
+                          ),
+                          GestureDetector(onTap:(){
+                            Audio.sound();
+                            showDialog(context: context, builder: (context)=>const MyNetwork());
+                          },child: const Text("My Network",style: TextStyle(color: Colors.white,fontSize: 12,decoration: TextDecoration.underline),)),
+                          const SizedBox(width: 1,),
+                          InkWell(
+                            onTap: (){
+                              Audio.sound();
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=> const DetailsContestScreen()));
+                            },
+                            child: SizedBox(
+                                width: widths*0.18,
+                                height: heights*0.02,
+                                child: const Text("Details",style: TextStyle(color: Colors.white,fontSize: 12,decoration: TextDecoration.underline),)),
+                          ),
+                          InkWell(
+                            onTap: (){
+                              Audio.sound();
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=> const Product()));
+                            },
+                            child: SizedBox(
+                                width: widths*0.21,
+                                height: heights*0.02,
+                                child: const Text("Leader Board ",style: TextStyle(color: Colors.white,fontSize: 12,decoration: TextDecoration.underline),)),
+                          ),
 
 
 
 
-
-                ],
-              )
-          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          )),
     );
   }
 }
-

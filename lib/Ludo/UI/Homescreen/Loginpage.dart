@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -22,20 +21,7 @@ class numberone extends StatefulWidget {
 }
 
 class _numberoneState extends State<numberone> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // ConnectivityConstants.initConnectivity();
-  }
 
-  // @override
-  // void dispose() {
-  //   connectionStatus;
-  //   super.dispose();
-  // }
-
-  // ConnectivityResult connectionStatus = ConnectivityResult.none;
 
   final TextEditingController phoneCon = TextEditingController();
   final TextEditingController passCon = TextEditingController();
@@ -114,26 +100,17 @@ class _numberoneState extends State<numberone> {
         return shouldPop!;
       },
       child: Scaffold(
-          body:
-              // connectionStatus == ConnectivityResult.none?
-              // Container(
-              //   height: heights*0.09,
-              //   width: widths*0.10,
-              //   child: Text("No internet connection",style: robotoRegular.copyWith(fontSize: widths*0.03),),
-              // ):
-              SingleChildScrollView(
+          body: SingleChildScrollView(
         child: Container(
           height: heights,
           width: widths,
           decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage(AppAsset.imagesPlainnew),
-                  fit: BoxFit.fill)),
+              image: DecorationImage(image: AssetImage(AppAsset.imagesPlainnew), fit: BoxFit.fill)),
           child: Column(
             children: [
               Padding(
                 padding: const EdgeInsets.all(18),
-                child: Image.asset(AppAsset.imagesLogonew),
+                child: Image.asset("assets/images/app_logo.png"),
               ),
               Column(
                 children: [
@@ -203,8 +180,6 @@ class _numberoneState extends State<numberone> {
                   ? JellyButton(
                       onTap: () {
                         Audio.sound();
-
-                        // User_login(phoneCon.text,passCon.text);
                         login_page(
                           phoneCon.text,
                         );
@@ -228,11 +203,7 @@ class _numberoneState extends State<numberone> {
     setState(() {
       loading = true;
     });
-
     final response = await http.post(Uri.parse(AppConstants.login),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
         body: jsonEncode(<String, String>{
           "phone": phoneCon,
         }));
@@ -240,12 +211,9 @@ class _numberoneState extends State<numberone> {
     var jsonlogin = jsonDecode(response.body);
 
     if (jsonlogin["error"] == "200") {
-      // var userid= jsonlogin['id']['id'];
       var status = jsonlogin['status'];
-      var User_id = jsonlogin['userid'];
-      otpurl(phoneCon, status, User_id);
-
-      // Utils.flushBarsuccessMessage(jsonlogin["msg"], context, Colors.white);
+      var userId = jsonlogin['userid'];
+      otpurl(phoneCon, status, userId);
     } else if (jsonlogin["error"] == "503") {
       setState(() {
         loading = false;
@@ -267,7 +235,7 @@ class _numberoneState extends State<numberone> {
     }
   }
 
-  otpurl(String phonenumber, status, user_id) async {
+  otpurl(String phonenumber, status, userId) async {
     final response = await http.get(
       phonenumber == "9999999999"
           ? Uri.parse(
@@ -288,7 +256,7 @@ class _numberoneState extends State<numberone> {
               builder: (context) => otp_Page(
                     phone: phonenumber,
                     status: status,
-                    userid: user_id,
+                    userid: userId,
                     otp: otp.toString(),
                   )));
       Utils.flushBarsuccessMessage(data["msg"], context, Colors.white);

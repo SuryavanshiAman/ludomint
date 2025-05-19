@@ -16,11 +16,13 @@ class Mylogout extends StatefulWidget {
 
 class _MylogoutState extends State<Mylogout> {
 
-  @override
-  void dispose() {
-    Audio.audioPlayers.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   if (Audio.audioPlayers != null) {
+  //     Audio.audioPlayers.dispose();
+  //   }
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,7 @@ class _MylogoutState extends State<Mylogout> {
               SizedBox(height: heights / 30),
               Text("Are you sure want to Logout?", style: RighteousMedium.copyWith(fontSize: heights * 0.023, color: Colors.white)),
               SizedBox(height: heights * 0.04),
-              Container(
+              SizedBox(
                 width: widths * 4,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

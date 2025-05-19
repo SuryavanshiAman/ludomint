@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:ludo_score/view_model/profile_view_model.dart';
+import 'package:provider/provider.dart';
 
 import '../../../audio.dart';
 import '../../../main_screen.dart';
@@ -128,11 +130,16 @@ class _MatchingState extends State<Matching> {
                             backgroundColor: Colors.transparent,
                             backgroundImage: AssetImage(AppAsset.imagesAvatar0),
                           ),
-                          Container(
-                            height: height*0.02,
-                            width: width*0.15,
-                            decoration: BoxDecoration(color: Colors.indigo.shade900,borderRadius: BorderRadius.circular(10),border: Border.all(color: Colors.lightBlue)),
-                            child: Center(child: Text(username==null?"":username.toString(),style: RighteousRegular.copyWith(fontSize: width*0.03,color: Colors.white),)),
+                          Consumer<ProfileViewModel>(
+                            builder: (context,profileVM,child) {
+                              final profileData = profileVM.profileModelData;
+                              return Container(
+                                height: height*0.02,
+                                width: width*0.15,
+                                decoration: BoxDecoration(color: Colors.indigo.shade900,borderRadius: BorderRadius.circular(10),border: Border.all(color: Colors.lightBlue)),
+                                child: Center(child: Text(profileData?.data?.username==null?"":"${profileData?.data?..toString()}",style: RighteousRegular.copyWith(fontSize: width*0.03,color: Colors.white),)),
+                              );
+                            }
                           )
                         ],
                       ),

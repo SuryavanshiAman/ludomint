@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:ludo_score/view_model/profile_view_model.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../audio.dart';
@@ -23,24 +25,19 @@ class _MypaytmState extends State<Mypaytm> {
 
   @override
   void initState() {
-    paytm_view();
-    getprofile();
+
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   Provider.of<ProfileViewModel>(context,listen: false).profileApi();
+    //
+    // });
     super.initState();
   }
 
 
 
-  @override
-  void dispose() {
-    getprofile();
-    super.dispose();
-  }
 
 
-  paytm_view(){
-    paytmHname.text = ptm_holder_name==null?"":ptm_holder_name.toString();
-    paytmno.text = paytm_no==null?"":paytm_no.toString();
-  }
+
 
 
   final TextEditingController paytmHname = TextEditingController();
@@ -190,9 +187,7 @@ class _MypaytmState extends State<Mypaytm> {
     var data = jsonDecode(response.body);
 
     if(data["error"]=="200"){
-      setState(() {
-        getprofile();
-      });
+      Provider.of<ProfileViewModel>(context,listen: false).profileApi();
       Navigator.pop(context);
       Navigator.pop(context);
       Utils.flushBarsuccessMessage(data["msg"], context, Colors.white);

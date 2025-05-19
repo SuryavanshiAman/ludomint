@@ -1,5 +1,5 @@
 
-import 'package:ludomint/helper/response/status.dart';
+import 'package:ludo_score/helper/response/status.dart';
 
 class ApiResponse<T> {
   Status? status;

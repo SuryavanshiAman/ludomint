@@ -1,6 +1,6 @@
 
 import 'package:flutter/foundation.dart';
-import 'package:ludomint/Ludo/UI/constant/api%20constant.dart';
+import 'package:ludo_score/Ludo/UI/constant/api%20constant.dart';
 import '../helper/network/base_api_services.dart';
 import '../helper/network/network_api_services.dart';
 

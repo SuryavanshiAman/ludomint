@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "127939317909",
-    "project_id": "ludozupee-d8599",
-    "storage_bucket": "ludozupee-d8599.appspot.com"
+    "project_number": "1083493997973",
+    "project_id": "ludoscore-4683a",
+    "storage_bucket": "ludoscore-4683a.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:127939317909:android:a2b51c3cf816ae7d7f4b9c",
+        "mobilesdk_app_id": "1:1083493997973:android:c9f6bbaa8be0edcfa76a9c",
         "android_client_info": {
-          "package_name": "com.zupee.zupigame.zupee"
+          "package_name": "com.ludo_score"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAWIQSzBS4Lq1rQhM2Mz_uQyNsPKqVdLck"
+          "current_key": "AIzaSyDjVeJrDuGa_X4PJ7b9_6LFgumcC7lVuiE"
         }
       ],
       "services": {

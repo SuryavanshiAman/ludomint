@@ -5,13 +5,14 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ludomint/Ludo/UI/Homescreen/create_join_room_screen.dart';
-import 'package:ludomint/Ludo/UI/Homescreen/money/Rechargeamount.dart';
-import 'package:ludomint/Ludo/UI/constant/api%20constant.dart';
-import 'package:ludomint/Ludo/UI/constant/utilll.dart';
-import 'package:ludomint/ludo_provider.dart';
-import 'package:ludomint/main.dart';
-import 'package:ludomint/view_model/join_match_view_model.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/create_join_room_screen.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/money/Rechargeamount.dart';
+import 'package:ludo_score/Ludo/UI/constant/api%20constant.dart';
+import 'package:ludo_score/Ludo/UI/constant/utilll.dart';
+import 'package:ludo_score/ludo_provider.dart';
+import 'package:ludo_score/main.dart';
+import 'package:ludo_score/view_model/join_match_view_model.dart';
+import 'package:ludo_score/view_model/profile_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,7 +33,6 @@ class Classic extends StatefulWidget {
 class _ClassicState extends State<Classic> {
   TextEditingController amount = TextEditingController();
   int _selectedItemIndex = -1;
-  int _belowItemIndex = 1; // Initialize with a value that won't match any index
   bool _isButtonEnabled = false;
   List<int> dataItems = [1, 5, 10, 30, 100, 300, 500, 1000, 2000];
   List<int> belowItems = [1, 2, 3, 4];
@@ -54,17 +54,14 @@ class _ClassicState extends State<Classic> {
     entryAmount.setEntryAmount(int.parse(amount.text));
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   var catogery;
   bool circular=false;
   @override
   Widget build(BuildContext context) {
     final roomCode = Provider.of<LudoProvider>(context);
     final join = Provider.of<JoinViewModel>(context);
+    final profileVM = Provider.of<ProfileViewModel>(context);
+    final profileData= profileVM.profileModelData;
     return Dialog(
       backgroundColor: Colors.black,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(39)),
@@ -168,13 +165,13 @@ class _ClassicState extends State<Classic> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Flexible(
-                  child: Text("MAIN WALLET:${wallet ?? "₹0.0"}",
+                  child: Text("MAIN WALLET:${profileData?.data?.wallet ?? "₹0.0"}",
                       style: RighteousMedium.copyWith(
                           fontSize: height * 0.014, color: Colors.white)),
                 ),
                 Flexible(
                   child: Text(
-                      bonus == null ? "₹0.0" : "BONUS WALLET: $bonus",
+                      profileData?.data?.bonus == null ? "₹0.0" : "BONUS WALLET: ${profileData?.data?.bonus}",
                       style: RighteousMedium.copyWith(
                           fontSize: height * 0.014, color: Colors.white)),
                 ),
@@ -193,7 +190,7 @@ class _ClassicState extends State<Classic> {
                 color: CupertinoColors.activeOrange,
                 onTap: () {
                   Audio.sound();
-                  if (amount.text.isNotEmpty && int.parse( wallet) >= int.parse(amount.text)) {
+                  if (amount.text.isNotEmpty && int.parse(profileData?.data!.wallet??"0.0") >= int.parse(amount.text)) {
                     setState(() {
                       circular=true;
                     });
@@ -203,16 +200,14 @@ class _ClassicState extends State<Classic> {
                   else if(amount.text.isEmpty) {
                     Utils.flushBarErrorMessage(
                         "First Select the Amount", context, Colors.white);
-                  }else if ( int.parse( wallet) < int.parse(amount.text)){
+                  }else if ( int.parse( profileData?.data?.wallet??"0") < int.parse(amount.text)){
                     Navigator.push(context, MaterialPageRoute(builder: (context) =>  recharge()));
                     Utils.flushBarErrorMessage(
                         "You have insuffecient balance", context, Colors.white);
                   }
                 },
-                title: "Create Room"):CircularProgressIndicator(),
-            SizedBox(
-              height: height * 0.03,
-            ),
+                title: "Create Room"):const CircularProgressIndicator(),
+            SizedBox(height: height * 0.03,),
             JellyButton(
                 color: CupertinoColors.activeOrange,
                 onTap: () {
@@ -275,8 +270,10 @@ class _ClassicState extends State<Classic> {
                 Colors.white);
           });
           // setState(() {
-            getprofile();
-          // });
+          final profileVM = Provider.of<ProfileViewModel>(context,listen: false);
+          profileVM.profileApi();
+
+        // });
       }
       else {
         Utils.flushBarErrorMessage(data["msg"], context, Colors.white);

@@ -1,7 +1,7 @@
 // library dotted_border;
 //
 // import 'package:flutter/material.dart';
-// import 'package:ludomint/Ludo/UI/constant/Dottedborder/painter.dart';
+// import 'package:ludo_score/Ludo/UI/constant/Dottedborder/painter.dart';
 //
 //
 // /// Add a dotted border around any [child] widget. The [strokeWidth] property

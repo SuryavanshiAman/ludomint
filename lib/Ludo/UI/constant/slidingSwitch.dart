@@ -20,7 +20,7 @@ class SlidingSwitch extends StatefulWidget {
   final Function onDoubleTap;
   final Function onSwipe;
 
-  const SlidingSwitch({
+  const SlidingSwitch({super.key,
     required this.value,
     required this.onChanged,
     this.height = 55,
@@ -39,7 +39,7 @@ class SlidingSwitch extends StatefulWidget {
     this.background = const Color(0xffe4e5eb),
     this.buttonColor = const Color(0xfff7f5f7),
     this.inactiveColor = const Color(0xfff7f5f7),
-  }) : super();
+  });
   @override
   _SlidingSwitch createState() => _SlidingSwitch();
 }
@@ -82,15 +82,15 @@ class _SlidingSwitch extends State<SlidingSwitch>
     return GestureDetector(
         onDoubleTap: () {
           _action();
-          if (widget.onDoubleTap != null) widget.onDoubleTap();
+          widget.onDoubleTap();
         },
         onTap: () {
           _action();
-          if (widget.onTap != null) widget.onTap();
+          widget.onTap();
         },
         onPanEnd: (details) {
           _action();
-          if (widget.onSwipe != null) widget.onSwipe();
+          widget.onSwipe();
         },
         child: Container(
           height: widget.height,

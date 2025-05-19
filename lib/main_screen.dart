@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ludomint/Ludo/UI/Homescreen/api/apiprofile.dart';
-import 'package:ludomint/Ludo/UI/Homescreen/jellybuttonn.dart';
-import 'package:ludomint/Ludo/UI/Homescreen/test2.dart';
-import 'package:ludomint/Ludo/UI/constant/utilll.dart';
-import 'package:ludomint/audio.dart';
-import 'package:ludomint/widgets/board_widget.dart';
-import 'package:ludomint/widgets/dice_widget.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/api/apiprofile.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/jellybuttonn.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/test2.dart';
+import 'package:ludo_score/Ludo/UI/constant/utilll.dart';
+import 'package:ludo_score/audio.dart';
+import 'package:ludo_score/view_model/profile_view_model.dart';
+import 'package:ludo_score/widgets/board_widget.dart';
+import 'package:ludo_score/widgets/dice_widget.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -40,14 +41,15 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    Provider.of<LudoProvider>(context, listen: false).listenToGameUpdates(context);
+    Provider.of<LudoProvider>(context, listen: false)
+        .listenToGameUpdates(context);
     Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         showGif = false;
       });
     });
-    _confettiController = ConfettiController(duration: const Duration(seconds: 10));
-    // TODO: implement initState
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 10));
     getUserId();
     super.initState();
   }
@@ -148,14 +150,18 @@ class _MainScreenState extends State<MainScreen> {
                                 onTap: () {
                                   winningMatch(userid, 0, roomCode);
                                   ludoProvider.removePlayerData(context);
-                                  FirebaseFirestore.instance.collection('ludo').doc(roomCode).update({
+                                  FirebaseFirestore.instance
+                                      .collection('ludo')
+                                      .doc(roomCode)
+                                      .update({
                                     'loserId': userid,
                                   });
                                   Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const Numberthree()), (route) => false);
+                                              const Numberthree()),
+                                      (route) => false);
                                   Audio.audioPlayer.stop();
                                   Audio.audioPlayers.stop();
                                 },
@@ -518,11 +524,11 @@ class _MainScreenState extends State<MainScreen> {
               BoardWidget(),
             ],
           ),
-          userDiseDesing(player1Data),
-          oppentsTurn(player3Data),
+          userDiseDesing(player1Data, player3Data),
+          oppentsTurn(player3Data, player1Data),
           Consumer<LudoProvider>(builder: (context, value, child) {
             if (data['3'].isEmpty || data['1'].isEmpty) {
-              if(data['loserId'] != "" && data['loserId'] != userid){
+              if (data['loserId'] != "" && data['loserId'] != userid) {
                 if (win == false) {
                   winningMatch(userid, data['entryAmount'].toString(),
                       data['roomCode'].toString());
@@ -530,23 +536,16 @@ class _MainScreenState extends State<MainScreen> {
                 win = true;
               }
               if (mounted) {
-                Future.delayed(Duration(seconds: 3), () {
+                Future.delayed(const Duration(seconds: 3), () {
                   if (mounted) {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => const Numberthree()),
+                      MaterialPageRoute(
+                          builder: (context) => const Numberthree()),
                     );
                   }
                 });
               }
-              // Future.delayed(Duration(seconds: 3), () {
-              //   Navigator.pushReplacement(
-              //       context,
-              //       MaterialPageRoute(
-              //           builder: (context) =>
-              //           const Numberthree()));
-              // });
-
               return Container(
                 color: Colors.black.withOpacity(0.8),
                 child: Center(
@@ -561,9 +560,6 @@ class _MainScreenState extends State<MainScreen> {
                           style: TextStyle(color: Colors.white, fontSize: 20),
                           textAlign: TextAlign.center),
                       Text(
-                          // value.winners.length == 1
-                          //     ? "The Winners is: ${value.winners.map((e) => e.name.toUpperCase()).join(", ")}"
-                          //     :
                           data['3'].isEmpty
                               ? "The Winners is:${player1Data['name']} "
                               : "The Winners is:${player3Data['name']} ",
@@ -586,12 +582,12 @@ class _MainScreenState extends State<MainScreen> {
                     data['roomCode'].toString());
               }
               win = true;
-              Future.delayed(Duration(seconds: 3), () {
+              Future.delayed(const Duration(seconds: 3), () {
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                        const Numberthree()), (route) => false);
+                        builder: (context) => const Numberthree()),
+                    (route) => false);
               });
               if (data["winnerId"] == userid) {
                 return Container(
@@ -607,16 +603,17 @@ class _MainScreenState extends State<MainScreen> {
                         const Text("Thank you for playing 😙",
                             style: TextStyle(color: Colors.white, fontSize: 20),
                             textAlign: TextAlign.center),
-                        Text(
-                            // value.winners.length == 1
-                            //     ? "The Winners is: ${value.winners.map((e) => e.name.toUpperCase()).join(", ")}"
-                            //     : data['3'].isEmpty
-                            //     ?
-                            "The Winners is:${name} ",
-                            // : "The Winners is:${player3Data['name']} ",
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 30),
-                            textAlign: TextAlign.center),
+                        Consumer<ProfileViewModel>(
+                            builder: (context, profileVM, child) {
+                          final profileData = profileVM.profileModelData;
+                          return Text(
+                              profileData?.data?.name == null
+                                  ? ""
+                                  : "The Winners is:${profileData?.data?.name}",
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 30),
+                              textAlign: TextAlign.center);
+                        }),
                         const Divider(color: Colors.white),
                         const SizedBox(height: 20),
                         const Text("Refresh your browser to play again",
@@ -678,49 +675,76 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget userDiseDesing(playerData) {
+  Widget appLogoSet() {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Container(
+        height: 100,
+        width: 60,
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/images/app_logo.png"))),
+      ),
+    );
+  }
+
+  Widget userDiseDesing(player1Data, player3Data) {
     final heights = MediaQuery.of(context).size.height;
     final widths = MediaQuery.of(context).size.width;
     return Consumer<LudoProvider>(
       builder: (context, value, child) => Padding(
         padding: EdgeInsets.only(bottom: heights / 11, left: heights / 30),
         child: Align(
-          alignment: Alignment.bottomLeft,
+          alignment: Alignment.bottomRight,
           child: Container(
             height: heights / 9,
-            width: widths / 3.2,
+            width: widths / 3,
+            padding: const EdgeInsets.only(top: 5),
             decoration: const BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage(AppAsset.imagesClassicdiceone),
-                    fit: BoxFit.fill)),
+                    fit: BoxFit.contain)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: heights / 60),
-                  child: Column(
-                    children: [
-                      Text(playerData['name'].toString(),
-                          // username == null ? "" : username.toString(),
-                          style: RighteousMedium.copyWith(
-                              fontSize: heights * 0.018, color: Colors.white)),
-                      Container(
-                        height: heights / 19,
-                        width: widths / 10,
-                        decoration: BoxDecoration(
-                            image: const DecorationImage(
-                              image: AssetImage(AppAsset.imagesAvatar0),
-                            ),
-                            border: Border.all(color: Colors.white),
-                            color: Colors.black),
+                Column(
+                  children: [
+                    Text(
+                        userid == player1Data['id'].toString()
+                            ? player1Data['name'].toString()
+                            : player3Data['name'].toString(),
+                        style: RighteousMedium.copyWith(
+                            fontSize: heights * 0.018, color: Colors.white)),
+                    Container(
+                      height: widths / 9,
+                      width: widths / 9,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                          image: const DecorationImage(
+                            image: AssetImage(AppAsset.imagesAvatar0),
+                          ),
+                          border: Border.all(color: Colors.white),
+                          color: Colors.black),
+                    ),
+                    FittedBox(
+                      child: Text(
+                        'Score: ${userid == player1Data['id'].toString() ? value.player1Score : value.player3Score}',
+                        style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
                       ),
-                    ],
-                  ),
+                    ),
+
+                  ],
                 ),
                 SizedBox(
-                  height: heights / 15,
-                  width: widths / 10,
-                  child: value.currentPlayer.type == LudoPlayerType.blue
+                  height: heights * 0.045,
+                  width: widths * 0.12,
+                  child: value.currentPlayer.type == LudoPlayerType.blue &&
+                              userid == player1Data['id'].toString() ||
+                          value.currentPlayer.type == LudoPlayerType.green &&
+                              userid == player3Data['id'].toString()
                       ? const DiceWidget()
                       : const SizedBox(),
                 ),
@@ -733,7 +757,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   bool isUserTurn = true;
-  Widget oppentsTurn(player2Data) {
+  Widget oppentsTurn(player3Data, player1Data) {
     final heights = MediaQuery.of(context).size.height;
     final widths = MediaQuery.of(context).size.width;
     return Consumer<LudoProvider>(
@@ -741,48 +765,54 @@ class _MainScreenState extends State<MainScreen> {
         return Padding(
           padding: EdgeInsets.only(top: heights / 10, right: heights / 35),
           child: Align(
-            alignment: Alignment.topRight,
+            alignment: Alignment.topLeft,
             child: Container(
               height: heights / 9,
-              width: widths / 3.3,
+              width: widths / 3,
               decoration: const BoxDecoration(
                   image: DecorationImage(
                       image: AssetImage(AppAsset.imagesClassicdicetwo),
-                      fit: BoxFit.fill)),
+                      fit: BoxFit.contain)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   SizedBox(
-                    height: heights / 15,
-                    width: widths / 10,
-                    child: value.currentPlayer.type == LudoPlayerType.green
-                        ? const DiceWidget()
-                        : const SizedBox(),
+                    height: heights * 0.045,
+                    width: widths * 0.1,
+                    child: value.currentPlayer.type == LudoPlayerType.blue &&
+                                userid == player1Data['id'].toString() ||
+                            value.currentPlayer.type == LudoPlayerType.green &&
+                                userid == player3Data['id'].toString()
+                        ? const SizedBox()
+                        : const DiceWidget(),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 7),
+                    padding: const EdgeInsets.only(top: 5),
                     child: Column(
                       children: [
-                        Text(player2Data['name'].toString(),
+                        Text(
+                            userid == player1Data['id'].toString()
+                                ? player3Data['name'].toString()
+                                : player1Data['name'].toString(),
                             // "Computer",
                             style: RighteousMedium.copyWith(
                                 fontSize: heights * 0.018,
                                 color: Colors.white)),
                         Container(
-                          height: heights / 19,
-                          width: widths / 10,
+                          height: widths / 9,
+                          width: widths / 9,
                           decoration: BoxDecoration(
                               image: const DecorationImage(
                                 image: AssetImage(AppAsset.imagesAvatar0),
                               ),
+                              shape: BoxShape.circle,
                               border: Border.all(color: Colors.white),
                               color: Colors.black),
                         ),
                         const Text(
-                          // 'Score: ${value.totalPoints}',
                           'Score:10',
                           style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                               color: Colors.white),
                         ),
@@ -799,6 +829,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   winningMatch(dynamic id, dynamic amount, dynamic roomCode) async {
+    final profileVM = Provider.of<ProfileViewModel>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString("userId");
 
@@ -820,8 +851,8 @@ class _MainScreenState extends State<MainScreen> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       if (data["error"] == "200") {
-          getprofile();
-          print("winningMatchApi");
+        profileVM.profileApi();
+        print("winningMatchApi");
       } else {
         Utils.flushBarErrorMessage(data["msg"], context, Colors.white);
       }

@@ -3,8 +3,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ludo_score/view_model/profile_view_model.dart';
 import 'package:pinput/pinput.dart';
 import 'package:http/http.dart'as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constant/api constant.dart';
@@ -40,16 +42,15 @@ class _otp_PageState extends State<otp_Page> {
   bool _timerExpired = false;
   bool isOtpVarified = false;
   bool loading = false;
-  TextEditingController _textController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
   @override
   void initState() {
-    print("🌐🌐🌐");
-    print(widget.userid);
-    print(widget.phone);
-    print(widget.status);
-    getprofile();
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   Provider.of<ProfileViewModel>(context,listen: false).profileApi();
+    // });
+
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_secondsRemaining > 0) {
           _secondsRemaining--;
@@ -74,7 +75,7 @@ class _otp_PageState extends State<otp_Page> {
       _timerExpired = false;
     });
 
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_secondsRemaining > 0) {
           _secondsRemaining--;
@@ -90,19 +91,10 @@ class _otp_PageState extends State<otp_Page> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      // appBar: AppBar(
-      //
-      //   // backgroundColor: Colors.transparent,
-      //   leading: IconButton(onPressed: (){
-      //     Navigator.pop(context);
-      //   },
-      //     icon: Icon(Icons.arrow_back),
-      //   ),
-      // ),
       body: Container(
         height: height,
         width: width,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             image: DecorationImage(
                 image: AssetImage(AppAsset.imagesPlainnew), fit: BoxFit.cover)),
         child: SingleChildScrollView(
@@ -115,16 +107,15 @@ class _otp_PageState extends State<otp_Page> {
                 child: IconButton(onPressed: (){
                   Navigator.pop(context);
                 },
-                  icon: Icon(Icons.arrow_back,size: 25,color: Colors.white,),
+                  icon: const Icon(Icons.arrow_back,size: 25,color: Colors.white,),
                 ),
               ),
               SizedBox(height: height*0.03,),
               Center(
-                child: Container(
-                    child: Image.asset(
-                  AppAsset.imagesLogonew,
+                child: Image.asset(
+                  "assets/images/app_logo.png",
                   height: height * 0.2,
-                )),
+                ),
               ),
               Center(
                 child: Text(
@@ -206,7 +197,7 @@ class _otp_PageState extends State<otp_Page> {
                     }, title: "Resend")
                   :Text(
                 '⏳$_secondsRemaining ',
-                style: TextStyle(fontSize: 24,color: Colors.white),)
+                style: const TextStyle(fontSize: 24,color: Colors.white),)
             ],
           ),
         ),
@@ -227,7 +218,7 @@ class _otp_PageState extends State<otp_Page> {
       Uri.parse('${AppConstants.OTP_verify}mobile=$phonenumber&otp=$_textController'),);
     var data = jsonDecode(response.body);
     if(data["error"]=="200"){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>Numberthree()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>const Numberthree()));
       Utils.flushBarsuccessMessage(data["msg"], context, Colors.white);
 
     }else {

@@ -4,10 +4,9 @@ import 'package:flutter_cashfree_pg_sdk/api/cfpayment/cfupi.dart';
 import 'package:flutter_cashfree_pg_sdk/api/cfpayment/cfupipayment.dart';
 import 'package:flutter_cashfree_pg_sdk/api/cfpaymentgateway/cfpaymentgatewayservice.dart';
 import 'package:flutter_cashfree_pg_sdk/utils/cfenums.dart';
-import 'package:ludomint/cashfree_provider.dart';
+import 'package:ludo_score/cashfree_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:upi_india/upi_india.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_cashfree_pg_sdk/api/cfsession/cfsession.dart';
@@ -24,9 +23,9 @@ class addcash extends StatefulWidget {
 
 class _addcashState extends State<addcash> {
 
-  Future<UpiResponse>? _transaction;
-  UpiIndia _upiIndia = UpiIndia();
-  List<UpiApp>? apps;
+  // Future<UpiResponse>? _transaction;
+  // UpiIndia _upiIndia = UpiIndia();
+  // List<UpiApp>? apps;
 
   TextStyle header = const TextStyle(
       fontSize: 18,
@@ -42,109 +41,109 @@ class _addcashState extends State<addcash> {
 
   @override
   void initState() {
-    _upiIndia.getAllUpiApps(mandatoryTransactionId: false).then((value) {
-      setState(() {
-        apps = value;
-      });
-    }).catchError((e) {
-      apps = [];
-    });
+    // _upiIndia.getAllUpiApps(mandatoryTransactionId: false).then((value) {
+    //   setState(() {
+    //     apps = value;
+    //   });
+    // }).catchError((e) {
+    //   apps = [];
+    // });
     super.initState();
   }
 
-  Future<UpiResponse> initiateTransaction(UpiApp app) async {
-    var long2 = double.parse(widget.amount.toString());
-    return _upiIndia.startTransaction(
-      app: app,
-      receiverUpiId: "merchant969855.augp@aubank",
-      receiverName: '100X Bet',
-      transactionRefId: 'Razorpay0256',
-      transactionNote: '100x',
-      amount: long2,
-    );
-  }
-  Widget displayUpiApps() {
-    if (apps == null)
-      return const Center(child: CircularProgressIndicator());
-    else if (apps!.length == 0)
-      return const Center(
-        child: Text(
-          "No apps found to handle transaction.",
-          style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white
-          ),
-        ),
-      );
-    else
-      return Align(
-        alignment: Alignment.topCenter,
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Wrap(
-            children: apps!.map<Widget>((UpiApp app) {
-              return GestureDetector(
-                onTap:
-                app.name=='PhonePe'?(){}: () {
-                  _transaction = initiateTransaction(app);
-                  setState(() {});
-                },
-                child: Container(
-                  height: 100,
-                  width: 100,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Image.memory(
-                        app.icon,
-                        height: 60,
-                        width: 60,
-                      ),
-                      Text(app.name),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      );
-  }
-
-  String _upiErrorHandler(error) {
-    switch (error) {
-      case UpiIndiaAppNotInstalledException:
-        return 'Requested app not installed on device';
-      case UpiIndiaUserCancelledException:
-        return 'You cancelled the transaction';
-      case UpiIndiaNullResponseException:
-        return 'Requested app didn\'t return any response';
-      case UpiIndiaInvalidParametersException:
-        return 'Requested app cannot handle the transaction';
-      default:
-        return 'Please Enter Amount';
-    }
-  }
-
-  void _checkTxnStatus(String status) {
-    switch (status) {
-      case UpiPaymentStatus.SUCCESS:
-
-        // addmony();
-        print('Transaction Successful');
-        break;
-      case UpiPaymentStatus.SUBMITTED:
-        print('Transaction Submitted');
-        break;
-      case UpiPaymentStatus.FAILURE:
-        print('Transaction Failed');
-        break;
-      default:
-        print('Received an Unknown transaction status');
-    }
-  }
+  // Future<UpiResponse> initiateTransaction(UpiApp app) async {
+  //   var long2 = double.parse(widget.amount.toString());
+  //   return _upiIndia.startTransaction(
+  //     app: app,
+  //     receiverUpiId: "merchant969855.augp@aubank",
+  //     receiverName: '100X Bet',
+  //     transactionRefId: 'Razorpay0256',
+  //     transactionNote: '100x',
+  //     amount: long2,
+  //   );
+  // }
+  // Widget displayUpiApps() {
+  //   if (apps == null)
+  //     return const Center(child: CircularProgressIndicator());
+  //   else if (apps!.length == 0)
+  //     return const Center(
+  //       child: Text(
+  //         "No apps found to handle transaction.",
+  //         style: TextStyle(
+  //             fontSize: 18,
+  //             fontWeight: FontWeight.bold,
+  //             color: Colors.white
+  //         ),
+  //       ),
+  //     );
+  //   else
+  //     return Align(
+  //       alignment: Alignment.topCenter,
+  //       child: SingleChildScrollView(
+  //         physics: const BouncingScrollPhysics(),
+  //         child: Wrap(
+  //           children: apps!.map<Widget>((UpiApp app) {
+  //             return GestureDetector(
+  //               onTap:
+  //               app.name=='PhonePe'?(){}: () {
+  //                 _transaction = initiateTransaction(app);
+  //                 setState(() {});
+  //               },
+  //               child: Container(
+  //                 height: 100,
+  //                 width: 100,
+  //                 child: Column(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   mainAxisAlignment: MainAxisAlignment.center,
+  //                   children: <Widget>[
+  //                     Image.memory(
+  //                       app.icon,
+  //                       height: 60,
+  //                       width: 60,
+  //                     ),
+  //                     Text(app.name),
+  //                   ],
+  //                 ),
+  //               ),
+  //             );
+  //           }).toList(),
+  //         ),
+  //       ),
+  //     );
+  // }
+  //
+  // String _upiErrorHandler(error) {
+  //   switch (error) {
+  //     case UpiIndiaAppNotInstalledException:
+  //       return 'Requested app not installed on device';
+  //     case UpiIndiaUserCancelledException:
+  //       return 'You cancelled the transaction';
+  //     case UpiIndiaNullResponseException:
+  //       return 'Requested app didn\'t return any response';
+  //     case UpiIndiaInvalidParametersException:
+  //       return 'Requested app cannot handle the transaction';
+  //     default:
+  //       return 'Please Enter Amount';
+  //   }
+  // }
+  //
+  // void _checkTxnStatus(String status) {
+  //   switch (status) {
+  //     case UpiPaymentStatus.SUCCESS:
+  //
+  //       // addmony();
+  //       print('Transaction Successful');
+  //       break;
+  //     case UpiPaymentStatus.SUBMITTED:
+  //       print('Transaction Submitted');
+  //       break;
+  //     case UpiPaymentStatus.FAILURE:
+  //       print('Transaction Failed');
+  //       break;
+  //     default:
+  //       print('Received an Unknown transaction status');
+  //   }
+  // }
 
   Widget displayTransactionData(title, body) {
     return Padding(

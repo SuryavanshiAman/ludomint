@@ -2,9 +2,9 @@
 //
 // import 'package:dotted_border/dotted_border.dart';
 // import 'package:flutter/material.dart';
-// import 'package:ludomint/Ludo/UI/Homescreen/jjellybutton.dart';
-// import 'package:ludomint/Ludo/UI/constant/style.dart';
-// import 'package:ludomint/audio.dart';
+// import 'package:ludo_score/Ludo/UI/Homescreen/jjellybutton.dart';
+// import 'package:ludo_score/Ludo/UI/constant/style.dart';
+// import 'package:ludo_score/audio.dart';
 //
 // class Myjoin extends StatefulWidget {
 //   const Myjoin({super.key});

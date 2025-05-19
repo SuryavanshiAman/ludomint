@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
-// import 'package:ludomint/Ludo/UI/constant/images.dart';
-// import 'package:ludomint/Ludo/UI/constant/style.dart';
+// import 'package:ludo_score/Ludo/UI/constant/images.dart';
+// import 'package:ludo_score/Ludo/UI/constant/style.dart';
 //
 //
 // class MyApp extends StatefulWidget{

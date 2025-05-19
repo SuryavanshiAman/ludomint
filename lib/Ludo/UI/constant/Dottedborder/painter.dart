@@ -2,7 +2,7 @@
 //
 // import 'package:flutter/cupertino.dart';
 // import 'package:flutter/material.dart';
-// import 'package:ludomint/Ludo/UI/constant/Dottedborder/border.dart';
+// import 'package:ludo_score/Ludo/UI/constant/Dottedborder/border.dart';
 //
 // typedef PathBuilder = Path Function(Size);
 //

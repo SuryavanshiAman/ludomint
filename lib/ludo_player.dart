@@ -1,4 +1,4 @@
-import 'package:ludomint/widgets/pawn_widget.dart';
+import 'package:ludo_score/widgets/pawn_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'constants.dart';

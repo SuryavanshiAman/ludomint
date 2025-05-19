@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_share/flutter_share.dart';
+// import 'package:flutter_share/flutter_share.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:ludomint/Ludo/UI/constant/api%20constant.dart';
+import 'package:ludo_score/Ludo/UI/constant/api%20constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../audio.dart';
@@ -819,11 +819,3 @@ Join us on this exciting journey and become a part of the Ludo Mint community!
 
 }
 
-String referalCode = 'initialData';
-Future<void> share() async {
-  await FlutterShare.share(
-      title: 'Referral Code :',
-      text: 'Join Now & Get Exiting Prizes. here is my Referral Code : ',
-      linkUrl: "",
-      chooserTitle: 'Referrel Code : ');
-}

@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -15,7 +14,7 @@ import 'package:flutter_cashfree_pg_sdk/api/cfupi/cfupiutils.dart';
 import 'package:flutter_cashfree_pg_sdk/utils/cfenums.dart';
 import 'package:flutter_cashfree_pg_sdk/utils/cfexceptions.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:ludomint/Ludo/UI/constant/utilll.dart';
+import 'package:ludo_score/Ludo/UI/constant/utilll.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../main.dart';
@@ -32,11 +31,12 @@ class PaymentService extends ChangeNotifier {
 
   String get paymentSessionId => _paymentSessionId;
 
-  String _selectedPayType="";
-  setPaymentSessionIdAndOrderId(String orderId, String paymentId,  BuildContext context){
+  String _selectedPayType = "";
+  setPaymentSessionIdAndOrderId(
+      String orderId, String paymentId, BuildContext context) {
     print("setting data: $orderId || $paymentId");
     // _selectedPayType = type;
-    _orderId =orderId;
+    _orderId = orderId;
     _paymentSessionId = paymentId;
     _context = context;
     initInvokedFunction();
@@ -45,9 +45,9 @@ class PaymentService extends ChangeNotifier {
   }
 
   initInvokedFunction() {
-    cfPaymentGatewayService.setCallback(verifyPayment,onError);
+    cfPaymentGatewayService.setCallback(verifyPayment, onError);
     final GlobalKey<CFCardWidgetState> myWidgetKey =
-    GlobalKey<CFCardWidgetState>();
+        GlobalKey<CFCardWidgetState>();
     try {
       var session = createSession();
       cfCardWidget = CFCardWidget(
@@ -96,7 +96,7 @@ class PaymentService extends ChangeNotifier {
           .setUPIID("tripathiji183-1@okaxis")
           .build();
       var upiPayment =
-      CFUPIPaymentBuilder().setSession(session!).setUPI(upi).build();
+          CFUPIPaymentBuilder().setSession(session!).setUPI(upi).build();
       cfPaymentGatewayService.doPayment(upiPayment);
     } on CFException catch (e) {
       print("😶‍🌫️😶‍🌫️😶‍🌫️:${e.message}");
@@ -105,11 +105,11 @@ class PaymentService extends ChangeNotifier {
 
   payUsingUpiApp() async {
     try {
-      cfPaymentGatewayService.setCallback(verifyPayment,onError);
+      cfPaymentGatewayService.setCallback(verifyPayment, onError);
       var session = createSession();
       var upi = CFUPIBuilder().setChannel(CFUPIChannel.INTENT_WITH_UI).build();
       var upiPayment =
-      CFUPIPaymentBuilder().setSession(session!).setUPI(upi).build();
+          CFUPIPaymentBuilder().setSession(session!).setUPI(upi).build();
       cfPaymentGatewayService.doPayment(upiPayment);
     } on CFException catch (e) {
       print(e.message);
@@ -137,8 +137,6 @@ class PaymentService extends ChangeNotifier {
       print("error is here: ${e.message}");
     }
   }
-
-
 
   CFSession? createSession() {
     try {
@@ -169,68 +167,90 @@ class PaymentService extends ChangeNotifier {
   // err and success handling...
   void verifyPayment(String orderId) {
     print("Verify Payment");
-    addmony(orderId, );
+    addmony(
+      orderId,
+    );
   }
 
   void onError(CFErrorResponse errorResponse, String orderId) {
     print(errorResponse.getMessage());
-    showDialog(context: _context!, builder: (ctx){
-      return Dialog(
-        child:  Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          width: width,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color:Colors.white,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text("Your payment request for order id: $orderId, has been failed, please try again later.",style: TextStyle( fontWeight: FontWeight.w600,
-                  fontSize: 16,),),
-              Text(errorResponse.getMessage().toString(),style: TextStyle( fontWeight: FontWeight.w600,
-                fontSize: 16,),),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    showDialog(
+        context: _context!,
+        builder: (ctx) {
+          return Dialog(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+              width: width,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.white,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(_context!);
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: height * 0.04,
-                      width: width * 0.2,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color:Colors.red,
-                      ),
-                      child:Text('Cancel',style: TextStyle( fontWeight: FontWeight.w600,
-                        fontSize: 16,color: Colors.white),),
+                  Text(
+                    "Your payment request for order id: $orderId, has been failed, please try again later.",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
                     ),
                   ),
+                  Text(
+                    errorResponse.getMessage().toString(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(_context!);
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: height * 0.04,
+                          width: width * 0.2,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.red,
+                          ),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
-              )
-            ],
-          ),
-        ),
-      );
-    });
+              ),
+            ),
+          );
+        });
     print("Error while making payment");
   }
-  addmony(dynamic orderId,)async {
 
+  addmony(
+    dynamic orderId,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     final userid = prefs.getString("userId");
-    final response =  await http.get(Uri.parse("https://root.ludomint.in/index.php/api/Mobile_app/updatewallet?orderid=$orderId"),
-
+    final response = await http.get(
+      Uri.parse(
+          "https://root.ludomint.in/index.php/api/Mobile_app/updatewallet?orderid=$orderId"),
     );
     var data = jsonDecode(response.body);
     print(userid);
     print("🫥🫥🫥");
     print(data);
-    if(data["status"]==200){
+    if (data["status"] == 200) {
       print(data["message"]);
       print("🫥🫥🫥");
       Fluttertoast.showToast(
@@ -240,8 +260,7 @@ class PaymentService extends ChangeNotifier {
         backgroundColor: Colors.green,
         textColor: Colors.white,
       );
-    }
-    else{
+    } else {
       print(data["message"]);
       print("😒😒😒😒😒");
       Fluttertoast.showToast(
@@ -251,12 +270,8 @@ class PaymentService extends ChangeNotifier {
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
-      // setState(() {
-      //   isLoading=false;
-      // });
-      // Utils.flushBarErrorMessage( data["message"],context,Colors.white);
-    }
 
+    }
   }
 }
 //

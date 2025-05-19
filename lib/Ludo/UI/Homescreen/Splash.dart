@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:ludo_score/generated/assets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constant/images.dart';
@@ -44,23 +45,23 @@ class _FSplashscreenState extends State<FSplashscreen> {
       width: sWidth,
       decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage(AppAsset.imagesLudoBG), fit: BoxFit.cover)),
-      child: Column(
-        children: [
-          Image.asset(
-            AppAsset.imagesAppIcon,
-            width: sWidth / 1.2,
-          ),
-          // SizedBox(height: sHeight/1.4),
-          Container(
-            height: sHeight / 10,
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage(AppAsset.imagesLoader),
-                    fit: BoxFit.cover)),
-          )
-        ],
-      ),
+              image: AssetImage("assets/images/splash.png"), fit: BoxFit.cover)),
+      // child: Column(
+      //   children: [
+      //     Image.asset(
+      //       AppAsset.imagesAppIcon,
+      //       width: sWidth / 1.2,
+      //     ),
+      //     // SizedBox(height: sHeight/1.4),
+      //     Container(
+      //       height: sHeight / 10,
+      //       decoration: const BoxDecoration(
+      //           image: DecorationImage(
+      //               image: AssetImage(AppAsset.imagesLoader),
+      //               fit: BoxFit.cover)),
+      //     )
+      //   ],
+      // ),
     ));
   }
 }

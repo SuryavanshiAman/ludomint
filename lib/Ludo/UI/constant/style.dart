@@ -1,5 +1,5 @@
 
-import 'package:ludomint/Ludo/UI/constant/api%20constant.dart';
+import 'package:ludo_score/Ludo/UI/constant/api%20constant.dart';
 import 'package:flutter/material.dart';
 
 import 'dimension.dart';
@@ -68,6 +68,7 @@ final RighteousMedium = TextStyle(
   fontFamily: AppConstants.fontRighteous,
   fontWeight: FontWeight.w500,
   fontSize: Dimensions.fontSizeDefault,
+
 );
 
 final RighteousBold = TextStyle(

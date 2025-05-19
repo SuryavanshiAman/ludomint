@@ -1,8 +1,7 @@
-import 'package:ludomint/constants.dart';
-import 'package:ludomint/widgets/pawn_widget.dart';
+import 'package:ludo_score/constants.dart';
+import 'package:ludo_score/widgets/pawn_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../ludo_player.dart';
 import '../ludo_provider.dart';
 
@@ -39,7 +38,7 @@ class BoardWidget extends StatelessWidget {
       decoration: const BoxDecoration(
         // borderRadius: BorderRadius.circular(40),
         image: DecorationImage(
-          image: AssetImage("assets/images/newboardnew.png"),
+          image: AssetImage("assets/images/dasboard_new.png"),
           fit: BoxFit.cover,
           alignment: Alignment.topCenter,
         ),
@@ -55,7 +54,6 @@ class BoardWidget extends StatelessWidget {
           Map<String, List<String>> pawnsToPrint = {};
           List<Widget> playersPawn = [];
 
-          //Sort players by current turn to make sure the player on top is the one who is playing
           players.sort((a, b) => value.currentPlayer.type == a.type ? 1 : -1);
 
           ///Loop through all players and add their pawns to the map
@@ -128,7 +126,6 @@ class BoardWidget extends StatelessWidget {
                   child: pawnsValue.first,
                 ));
               } else {
-                // This is for more than 1 pawn in 1 box
                 playersPawn.addAll(
                   List.generate(
                     pawnsValue.length,
@@ -196,19 +193,14 @@ class BoardWidget extends StatelessWidget {
         y = 1;
         break;
     }
-    String stageText = "Roll the dice";
     switch (stage) {
       case LudoGameState.throwDice:
-        stageText = "Roll the dice";
         break;
       case LudoGameState.moving:
-        stageText = "Pawn is moving...";
         break;
       case LudoGameState.pickPawn:
-        stageText = "Pick a pawn";
         break;
       case LudoGameState.finish:
-        stageText = "Game is over";
         break;
     }
     return Positioned(
@@ -230,7 +222,7 @@ class BoardWidget extends StatelessWidget {
                 textAlign: TextAlign.center,
                 text: TextSpan(
                     style: TextStyle(fontSize: 8, color: color),
-                    children:  [
+                    children:  const [
                       // const TextSpan(text: "Your turn!\n", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                       // TextSpan(text: stageText, style: const TextStyle(color: Colors.black)),
                     ]),

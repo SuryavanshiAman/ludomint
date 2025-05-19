@@ -1,4 +1,4 @@
-package com.zupee.zupigame.zupee
+package com.ludo_score
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,4 +1,4 @@
-import 'package:ludomint/withdrawHistory.dart';
+import 'package:ludo_score/withdrawHistory.dart';
 import 'package:flutter/material.dart';
 
 import 'Ludo/UI/constant/images.dart';

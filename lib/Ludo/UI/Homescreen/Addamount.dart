@@ -2,9 +2,9 @@
 // import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:http/http.dart'as http;
-// import 'package:ludomint/Ludo/UI/Homescreen/gamepage.dart';
-// import 'package:ludomint/Ludo/UI/constant/api%20constant.dart';
-// import 'package:ludomint/Ludo/UI/constant/utilll.dart';
+// import 'package:ludo_score/Ludo/UI/Homescreen/gamepage.dart';
+// import 'package:ludo_score/Ludo/UI/constant/api%20constant.dart';
+// import 'package:ludo_score/Ludo/UI/constant/utilll.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:upi_india/upi_india.dart';
 //

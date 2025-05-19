@@ -1,11 +1,11 @@
 
 import 'package:flutter/material.dart';
-import 'package:ludomint/Ludo/UI/constant/utilll.dart';
-import 'package:ludomint/constants.dart';
-import 'package:ludomint/generated/assets.dart';
-import 'package:ludomint/ludo_provider.dart';
-import 'package:ludomint/main.dart';
-import 'package:ludomint/widgets/image_tost.dart';
+import 'package:ludo_score/Ludo/UI/constant/utilll.dart';
+import 'package:ludo_score/constants.dart';
+import 'package:ludo_score/generated/assets.dart';
+import 'package:ludo_score/ludo_provider.dart';
+import 'package:ludo_score/main.dart';
+import 'package:ludo_score/widgets/image_tost.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 
@@ -52,21 +52,31 @@ class DiceWidget extends StatelessWidget {
         },
         child: Container(
           alignment: Alignment.center,
-          height:height * 0.08,
-          width:width * 0.19,
-          padding: EdgeInsets.only(left:width*0.025 ),
+          height:height * 0.06,
+          width:width * 0.24,
+          decoration: BoxDecoration(
+              // color: Colors.red,
+            image: DecorationImage(image: AssetImage(
+                ludoProvider.diceStarted?  "assets/images/dice.gif"
+                    : "assets/images/dice/${ludoProvider.diceResult}.png",
 
-          child: ludoProvider.diceStarted
-              ? Image.asset(
-            "assets/images/dice.gif",
-            height: height * 0.06,
-            width:width * 0.17,
-          )
-              : Image.asset(
-            "assets/images/dice/${ludoProvider.diceResult}.png",
-            height: height * 0.06,
-            width: width * 0.17,
+
+
+            ))
           ),
+
+          // padding: EdgeInsets.only(left:width*0.025 ),
+          // child: ludoProvider.diceStarted
+          //     ? Image.asset(
+          //
+          //   // height: height,
+          //   // width:width * 0.17,
+          // )
+          //     : Image.asset(
+          //
+          //   // height: height * 0.06,
+          //   // width: width * 0.17,
+          // ),
         ),
       ),
     );

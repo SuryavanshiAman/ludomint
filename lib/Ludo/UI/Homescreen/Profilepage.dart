@@ -1,14 +1,17 @@
 // ignore_for_file: deprecated_member_use, prefer_typing_uninitialized_variables, non_constant_identifier_names, use_build_context_synchronously
 
 import 'dart:convert';
-import 'package:ludomint/Ludo/UI/Homescreen/paytmDetails.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/paytmDetails.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:ludo_score/view_model/create_joine_view_model.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../audio.dart';
 import '../../../emailpage.dart';
+import '../../../view_model/profile_view_model.dart';
 import '../constant/api constant.dart';
 import '../constant/images.dart';
 import '../constant/style.dart';
@@ -31,28 +34,14 @@ class _MyprofileState extends State<Myprofile> {
 
 
 
- @override
-  void initState() {
-   getprofile();
-   changeusername_view();
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    getprofile();
-    super.dispose();
-  }
-
- changeusername_view(){
-   changeusername.text = username==null?"":username.toString();
-   nameCont.text = name==null?"":name.toString();
- }
-
-
-
-
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+  //     Provider.of<CreateJoinViewModel>(context, listen: false).clearData(context);
+  //   });
+  // }
+  //
   final TextEditingController changeusername = TextEditingController();
   final TextEditingController nameCont = TextEditingController();
   final TextEditingController email = TextEditingController();
@@ -61,6 +50,8 @@ class _MyprofileState extends State<Myprofile> {
   Widget build(BuildContext context) {
     final heights = MediaQuery.of(context).size.height;
     final widths = MediaQuery.of(context).size.width;
+    final profileVM =    Provider.of<ProfileViewModel>(context);
+    final profileData= profileVM.profileModelData;
     return Dialog(
       backgroundColor: Colors.black,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(39)),
@@ -79,14 +70,7 @@ class _MyprofileState extends State<Myprofile> {
                                         Padding(
                                           padding: const EdgeInsets.only(left:50),
                                           child: InkWell(
-                                            // // onTap:_camera,
-                                            child:
-                                            // file != null
-                                            //     ? CircleAvatar(
-                                            //   backgroundImage: FileImage(file!),
-                                            //   radius: heights/28,
-                                            // ) :
-                                          image== null
+                                            child: profileData?.data?.image == null
                                                 ?
                                             CircleAvatar(
                                               radius: heights/28,
@@ -95,8 +79,7 @@ class _MyprofileState extends State<Myprofile> {
                                                 : CircleAvatar(
                                               backgroundColor: Colors.white,
                                               backgroundImage: NetworkImage(
-                                                AppConstants.imageurl +
-                                                    image.toString(),
+                                                AppConstants.imageurl + profileData?.data?.image,
                                               ),
                                               radius: heights/28,
                                             ),
@@ -107,128 +90,130 @@ class _MyprofileState extends State<Myprofile> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: Column(
                                             children: [
-                                              Text( name==null?"":name.toString(), style: RighteousMedium.copyWith(fontSize: heights * 0.020, color: Colors.white)),
-                                              Text(RndId==null?"":RndId.toString(), style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white)),
+                                              Text( profileData?.data?.username == null ? "" : "${profileData?.data?.username.toString()}",
+                                                  style: RighteousMedium.copyWith(fontSize: heights * 0.020, color: Colors.white)),
+                                              Text(profileData?.data?.randId == null ? "" : "${profileData?.data?.username.toString()}",
+                                                  style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white)),
                                             ],
                                           ),
                                         ),
                                         SizedBox(width: widths/20,),
-                                        InkWell(
-                                            child:const Icon(Icons.edit, color: Colors.blueAccent) ,
-                                            onTap: (){
-                                              Audio.sound();
-                                              showDialog(context: context,
-                                                  builder: (ctx) => Dialog(
-                                                    backgroundColor: Colors.black,
-                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(39)),
-                                                    child:Container(
-                                                        height: heights/2.4,
-                                                      decoration: BoxDecoration(border: Border.all(color: Colors.yellow.shade800, width: 3),borderRadius: BorderRadius.circular(40)),
-                                                      child: Column(
-                                                          children: [
-                                                            Align(
-                                                                alignment: Alignment.topRight,
-                                                                child: InkWell(
-                                                                  child: Image.asset(AppAsset.imagesCross, height: heights/20),
-                                                                  onTap: (){
-                                                                    Audio.sound();
-                                                                    Navigator.pop(context);
-                                                                  },
-                                                                )
-                                                            ),
-                                                            Text("Change Username",style: RighteousMedium.copyWith(fontSize: heights * 0.030, color: Colors.white)),
-                                                            Padding(
-                                                              padding: const EdgeInsets.all(10),
-                                                              child: Container(
-                                                                height: heights/10,
-                                                                width: widths/1.7,
-                                                                child: TextField(
-                                                                  controller: changeusername,
-                                                                  style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white),
-                                                                  decoration: InputDecoration(
-                                                                      enabledBorder: const OutlineInputBorder(
-                                                                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                                                        borderSide: BorderSide(color: Colors.white, width: 2),
-                                                                      ),
-                                                                      focusedBorder: const OutlineInputBorder(
-                                                                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                                                        borderSide: BorderSide(color: Colors.white, width: 2),
-                                                                      ),
-                                                                      border: const OutlineInputBorder(
-                                                                        borderSide: BorderSide(color: Colors.white),
-                                                                        borderRadius: BorderRadius.all(
-                                                                          Radius.circular(12.0),
-                                                                        ),
-                                                                      ),
-                                                                      focusedErrorBorder: const OutlineInputBorder(
-                                                                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                                                        borderSide: BorderSide(color: Color(0xFFF65054)),
-                                                                      ),
-                                                                      errorBorder: const OutlineInputBorder(
-                                                                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                                                        borderSide: BorderSide(color: Color(0xFFF65054)),
-                                                                      ),
-                                                                      hintText: "Enter your username",
-                                                                      hintStyle:  RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white),
-                                                                      fillColor:const Color(0xff010a40).withOpacity(0.9),
-                                                                      filled: true
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Padding(
-                                                              padding: const EdgeInsets.all(10),
-                                                              child: Container(
-                                                                height: heights/10,
-                                                                width: widths/1.7,
-                                                                child: TextField(
-                                                                  controller: nameCont,
-                                                                  style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white),
-                                                                  decoration: InputDecoration(
-                                                                      enabledBorder: const OutlineInputBorder(
-                                                                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                                                        borderSide: BorderSide(color: Colors.white, width: 2),
-                                                                      ),
-                                                                      focusedBorder: const OutlineInputBorder(
-                                                                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                                                        borderSide: BorderSide(color: Colors.white, width: 2),
-                                                                      ),
-                                                                      border: const OutlineInputBorder(
-                                                                        borderSide: BorderSide(color: Colors.white),
-                                                                        borderRadius: BorderRadius.all(
-                                                                          Radius.circular(12.0),
-                                                                        ),
-                                                                      ),
-                                                                      focusedErrorBorder: const OutlineInputBorder(
-                                                                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                                                        borderSide: BorderSide(color: Color(0xFFF65054)),
-                                                                      ),
-                                                                      errorBorder: const OutlineInputBorder(
-                                                                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                                                        borderSide: BorderSide(color: Color(0xFFF65054)),
-                                                                      ),
-                                                                      hintText: "Re-enter your name",
-                                                                      hintStyle:  RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white),
-                                                                      fillColor:const Color(0xff010a40).withOpacity(0.9),
-                                                                      filled: true
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            JellyButton(
-                                                                onTap: () {
-                                                                  Profile_update(changeusername.text,nameCont.text);
-                                                                  Audio.sound();
-                                                                  },
-                                                                title: 'Submit'
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                  )
-                                              );
-                                            }
-                                        ),
+                                        // InkWell(
+                                        //     child:const Icon(Icons.edit, color: Colors.blueAccent) ,
+                                        //     onTap: (){
+                                        //       Audio.sound();
+                                        //       showDialog(context: context,
+                                        //           builder: (ctx) => Dialog(
+                                        //             backgroundColor: Colors.black,
+                                        //             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(39)),
+                                        //             child:Container(
+                                        //                 height: heights/2.4,
+                                        //               decoration: BoxDecoration(border: Border.all(color: Colors.yellow.shade800, width: 3),borderRadius: BorderRadius.circular(40)),
+                                        //               child: Column(
+                                        //                   children: [
+                                        //                     Align(
+                                        //                         alignment: Alignment.topRight,
+                                        //                         child: InkWell(
+                                        //                           child: Image.asset(AppAsset.imagesCross, height: heights/20),
+                                        //                           onTap: (){
+                                        //                             Audio.sound();
+                                        //                             Navigator.pop(context);
+                                        //                           },
+                                        //                         )
+                                        //                     ),
+                                        //                     Text("Change Username",style: RighteousMedium.copyWith(fontSize: heights * 0.030, color: Colors.white)),
+                                        //                     Padding(
+                                        //                       padding: const EdgeInsets.all(10),
+                                        //                       child: SizedBox(
+                                        //                         height: heights/10,
+                                        //                         width: widths/1.7,
+                                        //                         child: TextField(
+                                        //                           controller: changeusername,
+                                        //                           style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white),
+                                        //                           decoration: InputDecoration(
+                                        //                               enabledBorder: const OutlineInputBorder(
+                                        //                                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                        //                                 borderSide: BorderSide(color: Colors.white, width: 2),
+                                        //                               ),
+                                        //                               focusedBorder: const OutlineInputBorder(
+                                        //                                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                        //                                 borderSide: BorderSide(color: Colors.white, width: 2),
+                                        //                               ),
+                                        //                               border: const OutlineInputBorder(
+                                        //                                 borderSide: BorderSide(color: Colors.white),
+                                        //                                 borderRadius: BorderRadius.all(
+                                        //                                   Radius.circular(12.0),
+                                        //                                 ),
+                                        //                               ),
+                                        //                               focusedErrorBorder: const OutlineInputBorder(
+                                        //                                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                        //                                 borderSide: BorderSide(color: Color(0xFFF65054)),
+                                        //                               ),
+                                        //                               errorBorder: const OutlineInputBorder(
+                                        //                                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                        //                                 borderSide: BorderSide(color: Color(0xFFF65054)),
+                                        //                               ),
+                                        //                               hintText: "Enter your username",
+                                        //                               hintStyle:  RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white),
+                                        //                               fillColor:const Color(0xff010a40).withOpacity(0.9),
+                                        //                               filled: true
+                                        //                           ),
+                                        //                         ),
+                                        //                       ),
+                                        //                     ),
+                                        //                     Padding(
+                                        //                       padding: const EdgeInsets.all(10),
+                                        //                       child: SizedBox(
+                                        //                         height: heights/10,
+                                        //                         width: widths/1.7,
+                                        //                         child: TextField(
+                                        //                           controller: nameCont,
+                                        //                           style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white),
+                                        //                           decoration: InputDecoration(
+                                        //                               enabledBorder: const OutlineInputBorder(
+                                        //                                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                        //                                 borderSide: BorderSide(color: Colors.white, width: 2),
+                                        //                               ),
+                                        //                               focusedBorder: const OutlineInputBorder(
+                                        //                                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                        //                                 borderSide: BorderSide(color: Colors.white, width: 2),
+                                        //                               ),
+                                        //                               border: const OutlineInputBorder(
+                                        //                                 borderSide: BorderSide(color: Colors.white),
+                                        //                                 borderRadius: BorderRadius.all(
+                                        //                                   Radius.circular(12.0),
+                                        //                                 ),
+                                        //                               ),
+                                        //                               focusedErrorBorder: const OutlineInputBorder(
+                                        //                                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                        //                                 borderSide: BorderSide(color: Color(0xFFF65054)),
+                                        //                               ),
+                                        //                               errorBorder: const OutlineInputBorder(
+                                        //                                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                        //                                 borderSide: BorderSide(color: Color(0xFFF65054)),
+                                        //                               ),
+                                        //                               hintText: "Re-enter your name",
+                                        //                               hintStyle:  RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white),
+                                        //                               fillColor:const Color(0xff010a40).withOpacity(0.9),
+                                        //                               filled: true
+                                        //                           ),
+                                        //                         ),
+                                        //                       ),
+                                        //                     ),
+                                        //                     JellyButton(
+                                        //                         onTap: () {
+                                        //                           Profile_update(changeusername.text,nameCont.text);
+                                        //                           Audio.sound();
+                                        //                           },
+                                        //                         title: 'Submit'
+                                        //                     ),
+                                        //                   ],
+                                        //                 ),
+                                        //               )
+                                        //           )
+                                        //       );
+                                        //     }
+                                        // ),
                                       ],
                                     ),
                                     Padding(
@@ -253,7 +238,7 @@ class _MyprofileState extends State<Myprofile> {
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 children: [
                                                   const Icon(Icons.monetization_on_rounded,color: Colors.red,size: 20,),
-                                                  Text(wallet==null?"":wallet.toString(),  style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.black),),
+                                                  Text(profileData?.data?.wallet==null?"":"${profileData?.data?.wallet.toString()}",  style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.black),),
                                                 ],
                                               ),
                                             ),
@@ -277,10 +262,11 @@ class _MyprofileState extends State<Myprofile> {
                                               children: [
                                                 Text('Username',  style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.white),),
                                                 const Spacer(),
-                                                Container(
+                                                SizedBox(
                                                   width: widths*0.23,
                                                   // color: Colors.yellow,
-                                                  child: Text(username==null?"":username.toString(),
+                                                  child:
+                                                  Text( profileData?.data?.username == null ? "" : "${profileData?.data?.username.toString()}",
                                                     style: RighteousMedium.copyWith(fontSize: heights * 0.020, color: Colors.white),
                                                     textAlign: TextAlign.end,
                                                     overflow: TextOverflow.ellipsis,
@@ -306,7 +292,7 @@ class _MyprofileState extends State<Myprofile> {
                                                 // SizedBox(width: widths/40,),
                                                 Text('Mobile No.',  style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.white),),
                                                 const Spacer(),
-                                                Text(mobilenumber==null?"":mobilenumber.toString(),  style: RighteousMedium.copyWith(fontSize: heights * 0.020, color: Colors.white),),
+                                                Text(profileData?.data?.phone==null?"":"${profileData?.data?.phone}",  style: RighteousMedium.copyWith(fontSize: heights * 0.020, color: Colors.white),),
                                               ],
                                             ),
                                           ),
@@ -330,10 +316,11 @@ class _MyprofileState extends State<Myprofile> {
                                                   // SizedBox(width: widths/40,),
                                                   Text('Email Id',  style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.white),),
                                                   const Spacer(),
-                                                  Container(
+                                                  SizedBox(
                                                     width: widths/3,
                                                     // color: Colors.yellowAccent,
-                                                    child: Text(emailId==null?"Fill Your Email":emailId.toString(),
+                                                    child:
+                                                    Text(profileData?.data?.email==null?"":"${profileData?.data?.email}",
                                                       style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white),
                                                     maxLines: 1,
                                                     textAlign: TextAlign.end,
@@ -363,10 +350,10 @@ class _MyprofileState extends State<Myprofile> {
                                                   // SizedBox(width: widths/40,),
                                                   Text('Bank Account',  style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.white),),
                                                   const Spacer(),
-                                                  Container(
+                                                  SizedBox(
                                                     width: widths/4.1,
                                                     // color: Colors.yellowAccent,
-                                                    child: Text(bankA==null?"Fill Your Bank Details":bankA.toString(),
+                                                    child: Text(profileData?.data?.bankname==null?"Fill Your Bank Details":"${profileData?.data?.bankname}",
                                                       style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white),
                                                       maxLines: 1,
                                                       textAlign: TextAlign.end,
@@ -395,11 +382,11 @@ class _MyprofileState extends State<Myprofile> {
                                                 children: [
                                                   Text('Paytm Account',  style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.white),),
                                                   const Spacer(),
-                                                  Container(
+                                                  SizedBox(
                                                       width: widths/4.1,
                                                       // color: Colors.yellowAccent,
 
-                                                      child: Text(paytmA==null?"Fill Your Paytm Details":paytmA.toString(),
+                                                      child: Text(profileData?.data?.paytmNo==null?"Fill Your Paytm Details":"${profileData?.data?.paytmNo}",
                                                         style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white),
                                                       maxLines: 1,
                                                         textAlign: TextAlign.end,
@@ -427,13 +414,11 @@ class _MyprofileState extends State<Myprofile> {
                                               child: Row(
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 children: [
-                                                  // SizedBox(width: widths/40,),
                                                   Text('UPI', style: RighteousMedium.copyWith(fontSize: heights * 0.019, color: Colors.white),),
                                                   const Spacer(),
-                                                  Container(
+                                                  SizedBox(
                                                       width: widths/4.1,
-                                                      // color: Colors.yellowAccent,
-                                                      child: Text(upi_id==null?"Fill Your UPI Details":upi_id.toString(),
+                                                      child: Text(profileData?.data?.upiId==null?"Fill Your UPI Details":"${profileData?.data?.upiId}",
                                                         style: RighteousMedium.copyWith(fontSize: heights * 0.018, color: Colors.white),
                                                         maxLines: 1,
                                                         textAlign: TextAlign.end,
@@ -511,7 +496,7 @@ class _MyprofileState extends State<Myprofile> {
         print("👍👍👍👍update");
       }
       if(data["error"]=="200"){
-        getprofile();
+        Provider.of<ProfileViewModel>(context,listen: false).profileApi();
         Navigator.pop(context);
         Utils.flushBarsuccessMessage(data["msg"], context, Colors.white);
 

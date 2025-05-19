@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:ludo_score/view_model/profile_view_model.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart'as http;
 
@@ -21,23 +23,23 @@ class email_Page extends StatefulWidget {
 
 class _email_PageState extends State<email_Page> {
 
-  @override
-  void initState() {
-    bank_view();
-    getprofile();
-    super.initState();
-
-  }
-
-  @override
-  void dispose() {
-    getprofile();
-    super.dispose();
-  }
-  bank_view(){
-    emailCont.text = emailId==null?"":emailId.toString();
-
-  }
+  // @override
+  // void initState() {
+  //   bank_view();
+  //   getprofile();
+  //   super.initState();
+  //
+  // }
+  //
+  // @override
+  // void dispose() {
+  //   getprofile();
+  //   super.dispose();
+  // }
+  // bank_view(){
+  //   emailCont.text = emailId==null?"":emailId.toString();
+  //
+  // }
 
   final TextEditingController emailCont = TextEditingController();
 
@@ -147,6 +149,9 @@ class _email_PageState extends State<email_Page> {
   //
   // }
   Profile_update(String emailCont) async {
+    final profileVM= Provider.of<ProfileViewModel>(context,listen: false);
+
+
     print("guycyg");
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString("userId");
@@ -171,9 +176,7 @@ class _email_PageState extends State<email_Page> {
     print("👍👍👍👍update");
 
     if(data["error"]=="200"){
-      setState(() {
-        getprofile();
-      });
+     profileVM.profileApi();
       Navigator.pop(context);
       Navigator.pop(context);
       Utils.flushBarsuccessMessage(data["msg"], context, Colors.white);

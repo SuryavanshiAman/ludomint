@@ -1,5 +1,5 @@
-import 'package:ludomint/Ludo/UI/Homescreen/Leaderboard/alltime.dart';
-import 'package:ludomint/Ludo/UI/Homescreen/Leaderboard/weekly.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/Leaderboard/alltime.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/Leaderboard/weekly.dart';
 import 'package:flutter/material.dart';
 
 import '../../constant/images.dart';

@@ -2,8 +2,8 @@
 //
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:flutter/material.dart';
-// import 'package:ludomint/generated/assets.dart';
-// import 'package:ludomint/view_model/firebase_view_model.dart';
+// import 'package:ludo_score/generated/assets.dart';
+// import 'package:ludo_score/view_model/firebase_view_model.dart';
 // import 'package:provider/provider.dart';
 // import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 //
@@ -199,10 +199,10 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:ludomint/constants.dart';
-import 'package:ludomint/generated/assets.dart';
-import 'package:ludomint/ludo_provider.dart';
-import 'package:ludomint/view_model/firebase_view_model.dart';
+import 'package:ludo_score/constants.dart';
+import 'package:ludo_score/generated/assets.dart';
+import 'package:ludo_score/ludo_provider.dart';
+import 'package:ludo_score/view_model/firebase_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 

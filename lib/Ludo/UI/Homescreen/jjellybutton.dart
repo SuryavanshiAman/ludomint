@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-// import 'package:ludomint/Ludo/UI/constant/slidingSwitch.dart';
+// import 'package:ludo_score/Ludo/UI/constant/slidingSwitch.dart';
 //
 // class sliding extends StatefulWidget {
 //   const sliding({super.key});

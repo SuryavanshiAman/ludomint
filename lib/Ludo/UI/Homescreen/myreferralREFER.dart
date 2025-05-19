@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:ludo_score/view_model/profile_view_model.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../audio.dart';
 import '../constant/api constant.dart';
@@ -65,7 +67,13 @@ class _referralREFERState extends State<referralREFER> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("Total Coins:",style: RighteousMedium.copyWith(fontSize: heights * 0.025, color: Colors.white)),
-                        Text(wallet==null?"":wallet.toString(),style: RighteousMedium.copyWith(fontSize: heights * 0.025, color: Colors.white)),
+                        Consumer<ProfileViewModel>(
+                            builder: (context,profileVM,child) {
+                              final profileData= profileVM.profileModelData;
+                              return Text(profileData?.data?.wallet==null?"":"${profileData?.data?.wallet}",style: RighteousMedium.copyWith(fontSize: heights * 0.025, color: Colors.black));
+                            }
+                        ),
+
                       ],
                     ),
                     Padding(
@@ -85,7 +93,7 @@ class _referralREFERState extends State<referralREFER> {
                     ),
                     responseStatuscode== 400 ?
                     const Notfounddata(): items.isEmpty? const Center(child: CircularProgressIndicator()):
-                    Container(
+                    SizedBox(
                       height: heights/3,
                       width: widths/1.1,
                       // color: Colors.yellowAccent,
@@ -113,7 +121,7 @@ class _referralREFERState extends State<referralREFER> {
                                       backgroundImage:NetworkImage(AppConstants.imageurl+ items[index].image.toString()) ,
                                     ),
                                     SizedBox(width: widths/9,),
-                                    Container(
+                                    SizedBox(
                                         height: heights/20,
                                         width: widths/4,
                                         // color: Colors.purple,
@@ -126,7 +134,7 @@ class _referralREFERState extends State<referralREFER> {
                                     ),
                                     SizedBox(width: widths/10,),
 
-                                    Container(
+                                    SizedBox(
                                         height: heights/20,
                                         width: widths/9,
                                         // color: Colors.brown,

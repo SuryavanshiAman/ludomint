@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ludomint/Ludo/UI/Homescreen/create_join_room_screen.dart';
-import 'package:ludomint/Ludo/UI/constant/utilll.dart';
-import 'package:ludomint/ludo_provider.dart';
-import 'package:ludomint/repo/join_repo.dart';
+import 'package:ludo_score/Ludo/UI/Homescreen/create_join_room_screen.dart';
+import 'package:ludo_score/Ludo/UI/constant/utilll.dart';
+import 'package:ludo_score/ludo_provider.dart';
+import 'package:ludo_score/repo/join_repo.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
